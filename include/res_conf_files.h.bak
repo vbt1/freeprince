@@ -1,0 +1,22 @@
+#define RES_FILE_LEVEL 0
+#define RES_FILE_KID 1
+#define RES_FILE_PRINCE 2
+#define RES_FILE_DUNGEON 3
+#define RES_FILE_PCSOUND 4
+#define RES_FILE_TITLES 6
+#define RES_FILE_GUARD 7
+#define RES_FILE_PV 8
+#define RES_FILE_PALACE 9
+ /* numbers */
+#define RES_FILES {\
+	"LEVELS.DAT",\
+	"KID.DAT",\
+	"PRINCE.DAT",\
+	"VDUNGEON.DAT",\
+	"IBMSND1.DAT",\
+	"IBMSND2.DAT",\
+	"TITLE.DAT",\
+	"GUARD1.DAT",\
+	"PV.DAT",\
+	"VPALACE.DAT"\
+}

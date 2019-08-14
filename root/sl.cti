@@ -1,0 +1,89 @@
+Disc    CDROM SL.DSK
+
+LeadIn MODE1
+PostGap 150
+EndTrack
+
+Track MODE1
+	Pause 150     
+	Volume ISO9660 sl.DSK
+
+	SystemArea "ip.bin" ; emplacement 0-2 extraction avec des blocs de 2048 , taille ip 1er fichier - 19
+	
+	PrimaryVolume
+
+	SystemIdentifier        "SEGA SEGASATURN"
+	VolumeIdentifier        "SL"
+	VolumeSetIdentifier     "SL"
+	LogicalBlockSize        2048
+	PublisherIdentifier     "SEGA ENTERPRISES, LTD."
+	DataPreparerIdentifier  "SEGA ENTERPRISES, LTD."
+	ApplicationIdentifier   "SL"
+	CopyrightFileIdentifier "CPY.TXT"
+	AbstractFileIdentifier  "ABS.TXT"
+	BibliographicFileIdentifier  "BIB.TXT"
+
+	Lpath               ; Path tables as specified for Saturn
+	Mpath
+	
+	Hierarchy
+		File    0.BIN;1
+			Source .\SL.BIN
+		EndFile
+
+		File    ABS.TXT;1
+			Source .\ABS.TXT
+		EndFile
+
+		File    BIB.TXT;1
+			Source .\BIB.TXT
+		EndFile
+
+		File    CPY.TXT;1
+			Source .\CPY.TXT
+		EndFile
+
+		File    SDDRVS.TSK;1
+			Source .\SDDRVS.TSK
+		EndFile
+
+		File    LEVELS.DAT;1
+			Source .\LEVELS.DAT
+		EndFile
+		File    KID.DAT;1
+			Source .\KID.DAT
+		EndFile
+		File    PRINCE.DAT;1
+			Source .\PRINCE.DAT
+		EndFile
+		File    VDUNGEON.DAT;1
+			Source .\VDUNGEON.DAT
+		EndFile
+		File    IBMSND1.DAT;1
+			Source .\IBMSND1.DAT
+		EndFile
+		File    IBMSND2.DAT;1
+			Source .\IBMSND2.DAT
+		EndFile
+		File    TITLE.DAT;1
+			Source .\TITLE.DAT
+		EndFile
+		File    GUARD1.DAT;1
+			Source .\GUARD1.DAT
+		EndFile
+		File    PV.DAT;1
+			Source .\PV.DAT
+		EndFile
+		File    VPALACE.DAT;1
+			Source .\VPALACE.DAT
+		EndFile
+	EndHierarchy
+EndPrimaryVolume
+EndVolume
+PostGap 150
+EndTrack
+
+Leadout CDDA
+ Empty  500
+EndTrack
+EndDisc

@@ -1,0 +1,92 @@
+Ganimake format standard 0.1.0-beta
+
+Table of Contents
+
+
+
+
+1. Main Structure
+	Ganimage files are xml compatible, that includes MIME type and ".xml" extension.
+
+1.1. Main tags
+1.1.1 TDT, ?xml and script tags
+	The file must start with the <?xml ?> tag and have the actual DTD of the format. The document must be well-formed. The big tag envolving the whole file is <script>. A version attribute must be added to both tags adding respectively the version of the xml and the version of the standard used. In case of 0.1.0-beta, a valid scrip tag may be '<script version="0.1.0-beta">`.
+	
+1.1.2 Settings tag
+	Inside this tag a setting xml structure may be added, the format will be extensible and has not been decided.
+1.1.3 States tag
+	Another mandatory child of scripts is the states tag. Inside this tag you must include every tag related to the running of the script. The attribute begin is required and must point to an existing "st" tag. Read bellow to understand how it works.
+
+1.1.3.1 St tag
+	This tag indicates the interpreter we are defining a state. Each state has a name. The script execution goes from states to states and may fork and be in several states at the same time. The state where the script starts is the begin state defined in 1.1.3
+	After a state is over, the script execution is stopped, until next states are provided i this state. Those states are run in parallel.
+	The program exetution inside a state and the time it takes is defined by frames. You may define a frame just adding the attribite frame to the tags inside a frame. You can add more than one tags for a frame and more than one frames in a tag.
+
+1.1.3.2 st child tags
+	Image: shows an image during the frame time. (time, frame, palette, file, src, erase?)
+	Wait: waits until the frame is over (time, frame)
+	Event: forks or stops the running state when an event occurs. (time, frame, type, code, state|fork)
+	Sound: plays a sound until the end of the frames is reached in case they are specified (time, frame, src, file)
+	Text: Shows a text in the screen (time, frame, text, (formatted?)|(x, y))
+
+1.1.3.3 Inheritance and folder tag
+	The folder tag is a tag owned by states or st. It contains several attributes and inheritates thos attributes to the tags inside it in case those attributes aren't explicited in the tags (overriden) or are invalid for this type.
+	Example:
+		In this example the tag t1 accepts foo as an attribute bu doesn't accept the bar as parameter. the tag t2 accepts both as aparameters.
+		<folder foo="hello" bar="world">
+			<t1 />
+			<t1 foo="hallo"/>
+			<t1 />
+			<t2 />
+			<t2 bar="earth">
+		</folder>
+		is equivalent to:
+		<t1 foo="hello" />
+		<t1 foo="hallo" />
+		<t1 foo="hello" />
+		<t2 foo="hello" bar="world" />
+		<t2 foo="hello" bar="earth" />
+
+1.2 Attributes
+1.2.1 event/code
+	Valid codes are:
+	Extra keys: "<-", "->", "^", ".", "delete", "insert", "pgup", "pgdown", "space", "enter"
+	Function keys: "F1", "F2",
+	Keyboard keys: "kq", "kt", "k1", "k5", "kk",
+	Numpad keys: "n1", "n7", "n*",
+	Combinations: "Ctrl+kL" for Ctrl+L (note for cupper case you must specify Shift) "Shift+kD", "Ctrl+Shift+Alt+kk", "Ctrl+Alt+Delete", "Alt Gr+Delete",
+	Sequence: "Ctrl+(kc kh ke ka kt)"
+	Note in some OS some codes may trigger other codes. E.g.: "Ctrl+M", "enter" or "ctrl+i", "tab"
+
+1.2.2 time
+	valid time units are: ms, s, m, h. E.g.: "5h" for 5 ours "15ms" for 15 milliseconds
+
+1.2.3 state, fork and begin
+	May the directly the name of the st or the name and the frame. "hello" goes to st hello. "hello@3" goes to st hello frame 3. In case a sound had the frame "1-4" and the state specified to go to the frame 3 it isn't played. In that case you must play the sound in the state before.
+
+1.2.4 frame
+	Integers and ranges. E.g: "1", "2", "1-15", "19"
+	
+	
+	
+
+2. Simple Script Sample
+
+<?xml version="1.0" ?>
+ <script version="1.0">
+  <settings>
+  </settings>
+  <states begin="start">
+   <st name="start">
+    <folder palette="200" file="dungeon">
+     <image time="2ms" frame="1" src="345"/>
+     <image time="3ms" frame="2" src="346"/>
+     <image time="2ms" frame="3" src="347"/>
+     <image time="6ms" frame="4" src="348"/>
+     <sound frame="1-3" src="6573" file="digisnd1"/>
+     <event frame="1-4" type="key" code="->" state="hi@3"/><!-- goes to uses state hi with frame 3 -->
+    </folder>
+    <event frame="1" type="key" code="Ctrl+kL" state="start"/>
+   </st>
+  </states>
+ </script>

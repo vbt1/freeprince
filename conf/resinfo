@@ -1,0 +1,35 @@
+#!/bin/sh
+
+AWK=`which awk`
+if [ $? != 0 ]; then echo "Error. Awk is needed by the instalation script, please install it.";exit 1; fi
+GREP=`which grep`
+if [ $? != 0 ]; then echo "Error. Grep not found!";exit 1; fi
+
+#resources
+$GREP resources.conf -v -e '\(^$\)\|^#' |$AWK "
+
+{
+	res=0
+	for (i=3;i<=NF;i++) {
+		if (match(\$i,/^[0-9]*-[0-9]*$/)) {
+			split(\$i,a,\"-\")
+			for (g=a[1];g<=a[2];g++) {
+				if (g==\"$1\") {
+					printf \"def=%s; res=%4s; frame=%4d\\n\",\$1,g,res
+				}
+				res++
+			}
+		} else {
+			res++
+			if (\$i==\"$1\") {
+				printf \"def=%s; res=%4s; frame=%4d\\n\",\$1,\$i,res
+			}
+		}
+	}
+}
+"
+
+#footer
+exit 0
+
+

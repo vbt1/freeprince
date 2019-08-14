@@ -1,0 +1,25 @@
+Versions
+
+* 0.1
+ - Gfx libraries
+ - Dummy Kernel
+
+* 0.2
+ - Hard Coded Movements support
+ - Hard Coded titles and presentations
+ - Quick & dirty kernel
+ - Room drawing
+ - Tested OS X and Windows ports
+ - Window Caption
+
+* 0.3
+ - Object state system
+ - Rebuilt kernel to support configuration files
+ - Rebuilt tile handling library
+ - Tested BSD port
+ - Titles and presentations sent to a configuration file
+ - Coded lives
+ - Falling tiles
+
+* 0.4
+ - Tested on IRIX

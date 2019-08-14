@@ -1,0 +1,9 @@
+#define RES_MODS_INVERT 0x01
+#define RES_MODS_BW 0x02
+#define RES_MODS_HAS_D 0x04
+#define RES_MODS_HAS_L 0x08
+#define RES_MODS_HAS_R 0x10
+#define RES_MODS_WHITE 0x00
+#define RES_MODS_RED 0x20
+#define RES_MODS_GREEN 0x40
+#define RES_MODS_BLUE 0x60
