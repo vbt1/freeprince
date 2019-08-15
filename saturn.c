@@ -180,9 +180,9 @@ static const Sint8	logtbl[] = {
     slBitMapBase(0, 0);
     slScrAutoDisp(NBG0ON | NBG1ON);
 
-	screen->pixels = (unsigned char*)malloc(sizeof(unsigned char)*width*height);
-/*	screen->pixels = (Uint8 *)(0x00202000); */
-	CHECKMALLOCRESULT(screen->pixels); 
+/*	screen->pixels = (unsigned char*)malloc(sizeof(unsigned char)*width*height);*/
+	screen->pixels = (Uint8 *)(0x00202000); 
+/*	CHECKMALLOCRESULT(screen->pixels); */
 	screen->format->BytesPerPixel = 1;
 	screen->pitch = width;
 	screen->flags = (SDL_HWSURFACE|SDL_ASYNCBLIT|SDL_RLEACCEL);
@@ -550,8 +550,11 @@ else
 	slPrint("SDL_UpperBlit sans srcrect       ",slLocate(3,21));
 	for( Sint16 i=0;i<dstrect->h;i++)
 	{
+//		memcpy((unsigned long*)(dst->pixels + ((i + (dstrect->y)) * dst->pitch) + dstrect->x),
+//			   (unsigned long*)(src->pixels + ((i + 0) * dstrect->w) + 0),dstrect->w);
 		memcpy((unsigned long*)(dst->pixels + ((i + (dstrect->y)) * dst->pitch) + dstrect->x),
-			   (unsigned long*)(src->pixels + ((i + 0) * dstrect->w) + 0),dstrect->w);
+			   (unsigned long*)(src->pixels + (i * dst->pitch)),dstrect->w);
+
 	}
 }
 	slSynch();
@@ -617,10 +620,10 @@ SDL_Surface * SDL_CreateRGBSurface(Uint32 flags, int width, int height, int dept
 {
 	SDL_Surface *surface;
 	surface = (SDL_Surface*)malloc(sizeof(SDL_Surface));
-/*	surface->pixels = (unsigned char*)malloc(sizeof(unsigned char)*width*height); */
+	surface->pixels = (unsigned char*)malloc(sizeof(unsigned char)*width*height); 
 /*	surface->pixels = (Uint8 *)(0x00202000);*/
-	surface->pixels = screen->pixels; 
-/*	CHECKMALLOCRESULT(surface->pixels); */
+/*	surface->pixels = screen->pixels; */
+	CHECKMALLOCRESULT(surface->pixels); 
 	surface->format->BytesPerPixel = 1;
 	surface->pitch =	screenWidth;
 	surface->w     =	width;

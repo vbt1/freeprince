@@ -124,22 +124,21 @@ slPrint("resource coudn't be loaded.                                     ",slLoc
 				imgsActive++;
 			}
 
-#ifdef VBT
+
 			for (i=0;i<objCount;i++) { /*objects*/
 				objArray[objsActive].obj=objectCreate(obj[i].location,obj[i].floor,DIR_LEFT,obj[i].state,obj[i].res,obj[i].cacheMirror,oGeneric);
 				objArray[objsActive].active=1;
 				objArray[objsActive].duration=obj[i].duration;
 				objsActive++;
 			}
-#endif
+
 /*		TODO: code sounds	
  *		for (i=0;i<sndCount;i++) {
 				sndArray[sndsActive]=snd[i];
 				sndsActive++;
 			}*/
 
-/*			outputClearScreen();*/
-#ifdef VBT
+			outputClearScreen();
 			/* The bottom layer */
 			for (i=0;i<imgsActive;i++) {
 				if (imgArray[i].layer==ANIMS_LAYERTYPE_BOTTOM)
@@ -148,7 +147,7 @@ slPrint("resource coudn't be loaded.                                     ",slLoc
 					outputDrawBitmap(imgArray[i].img->pFrames[0], imgArray[i].x, imgArray[i].y);
 				}
 			}
-			
+#if 0			
 			/* move objects */
 			for (i=0;i<objsActive;i++) {
 				/*TODO: detect exits */

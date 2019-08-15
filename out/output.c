@@ -316,7 +316,7 @@ void* outputLoadBitmap(const unsigned char* data, int size,
 	loadedSurface->left=left;
 	loadedSurface->bottom=bottom;
 	
-	loadedSurface->surface = SDL_CreateRGBSurface(SDL_SWSURFACE|SDL_HWPALETTE, w, h, 16, 0, 0, 0, 0); /* TODO: bugfix: w is un bytes not in pixels */
+	loadedSurface->surface = SDL_CreateRGBSurface(SDL_SWSURFACE|SDL_HWPALETTE, w, h, 8, 0, 0, 0, 0); /* TODO: bugfix: w is un bytes not in pixels */
 	SDL_SetColorKey(loadedSurface->surface, SDL_SRCCOLORKEY, 0);
 	if (!loadedSurface->surface) {
 /*		SYS_Exit(0); */

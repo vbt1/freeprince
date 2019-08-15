@@ -150,7 +150,7 @@ tData* resLoad(long id) {
 	int from=res_get_part_from(id);
 	int type=res_get_part_type(id);
 */
-	int mask=res_get_part_type(id);
+	int mask=res_get_part_mods(id);
 	int total=res_get_part_size(id);
 	int from=res_get_part_from(id);
 	int type=res_get_part_type(id);
@@ -219,6 +219,7 @@ tData* resLoad(long id) {
 					return NULL;
 				}
 				if (palette.size!=100) {
+
 				slPrint("Fatal error: resLoad: invalid palette                                     ",slLocate(2,21));
 /*     			fprintf(stderr,"Fatal error: resLoad: invalid palette\n");*/
 					return NULL;
