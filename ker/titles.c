@@ -60,15 +60,19 @@ typedef struct {
 tMenuOption getAction(tKey key) {
 	switch(key.actionPerformed) {
 	case quit:
+slPrint("menuQuit(key)                                     ",slLocate(2,22));
 		return menuQuit;
 	case load:
+slPrint("menuLoad(key)                                     ",slLocate(2,22));
 		return menuLoad;
 	default:
+slPrint("menuStart(key)                                     ",slLocate(2,22));
 		return menuStart;
 	}
 }
 
 tMenuOption playAnimation(int id) {
+slPrint("playAnimation()                                     ",slLocate(2,2));
 
 	/* Declare variables */
 	int imgCount,         objCount,              sndCount,               i;
@@ -96,19 +100,26 @@ tMenuOption playAnimation(int id) {
 	/*sndArray=(animSound*)malloc(sndTotal*sizeof(animSound));*/
 
 	/* main animation kernel loop */
+slPrint("animGetFrame()                                     ",slLocate(2,2));
+
 	while (animGetFrame(&imgCount,&objCount,&sndCount,&img,&obj,&snd)) {
 		int reprocessInput=1;
 
 		while(reprocessInput) {
+slPrint("reprocessInput=1                                     ",slLocate(2,2));
 
-		if (!inputGetEvent(&key)) {
-/*		if (0) { */
+/*		if (!inputGetEvent(&key)) {*/
+		if (0) { 
 			/* key pressed */
 		 	/*  if there is an action      and  the action wasn't control key */
 			if (key.actionPerformed!=none  &&   !(inputGetCtrl(key.status)&&key.actionPerformed==other))
+			{
+slPrint("getAction=1                                     ",slLocate(2,2));
 				return getAction(key);
+			}
 		} else {
 			reprocessInput=0;
+slPrint("reprocessInput=0                                     ",slLocate(2,2));
 			/* create new images/objects/sounds */
 			for (i=0;i<imgCount;i++) { /*images*/
 				imgArray[imgsActive].img=resLoad(img[i].res);
@@ -124,14 +135,14 @@ slPrint("resource coudn't be loaded.                                     ",slLoc
 				imgsActive++;
 			}
 
-
+#if 0
 			for (i=0;i<objCount;i++) { /*objects*/
 				objArray[objsActive].obj=objectCreate(obj[i].location,obj[i].floor,DIR_LEFT,obj[i].state,obj[i].res,obj[i].cacheMirror,oGeneric);
 				objArray[objsActive].active=1;
 				objArray[objsActive].duration=obj[i].duration;
 				objsActive++;
 			}
-
+#endif
 /*		TODO: code sounds	
  *		for (i=0;i<sndCount;i++) {
 				sndArray[sndsActive]=snd[i];
@@ -147,7 +158,7 @@ slPrint("resource coudn't be loaded.                                     ",slLoc
 					outputDrawBitmap(imgArray[i].img->pFrames[0], imgArray[i].x, imgArray[i].y);
 				}
 			}
-#if 0			
+#if 1			
 			/* move objects */
 			for (i=0;i<objsActive;i++) {
 				/*TODO: detect exits */

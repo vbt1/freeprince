@@ -52,6 +52,7 @@ int editAction(tKey* key,SDLKey k) {
 	key->actionPerformed=other;
 	/* Control actions */
 	if (inputGetCtrl(key->status)) {
+slPrint("inputGetCtrl(yes)                                     ",slLocate(2,21));
 		switch (k) {
 		case SDLK_g:
 			key->actionPerformed=save;
@@ -80,6 +81,10 @@ int editAction(tKey* key,SDLKey k) {
 		default:
 			break;
 		}
+	}
+	else
+	{
+	slPrint("inputGetCtrl(no)                                     ",slLocate(2,21));
 	}
 	/* Shift actions */
 	if (inputGetShift(key->status)) {
@@ -246,9 +251,13 @@ int inputGetEvent(tKey* key) {
 }
 
 static SDL_TimerID timer;
-
+int vbt5=0;
 Uint32 timer_callback(Uint32 interval, void *param)
 {
+	char toto[50];
+sprintf(toto,"timer_callback %d        ",vbt5++);
+slPrint(toto,slLocate(10,1));	
+
 	SDL_Event event;
 
 	/* Push a user-defined event on the event queue: */

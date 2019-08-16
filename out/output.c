@@ -412,6 +412,25 @@ char toto[50];
 	dest.y = y-s->h-img->bottom;
 	dest.w = s->w;
 	dest.h = s->h;
+
+if (dest.x>320 || dest.x<0)
+{
+	return;
+}
+if (dest.y>200 || dest.y<0)
+{
+	return;
+}
+
+if (dest.w>320)
+{
+	dest.w=320;
+}
+if (dest.h>200)
+{
+	dest.h=200;
+}
+
 sprintf(toto,"src w%d h %d p %d        ",s->w,s->h,s->pitch);
 slPrint(toto,slLocate(10,15));	
 sprintf(toto,"dst x %d y %d w%d h %d        ",dest.x,dest.y,dest.w,dest.h);

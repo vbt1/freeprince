@@ -344,8 +344,8 @@ Uint32 SDL_MapRGB (SDL_PixelFormat *format, Uint8 r, Uint8 g, Uint8 b)
 //--------------------------------------------------------------------------------------------------------------------------------------
 void SDL_FreeSurface(SDL_Surface *surface)
 {
-//	if(surface->pixels)
-//		free(surface->pixels);
+	if(surface->pixels)
+		free(surface->pixels);
 	return;
 }
 //--------------------------------------------------------------------------------------------------------------------------------------
@@ -615,21 +615,24 @@ if((dst)!=NULL)
 /*
   slBMBoxFill((dest)->x, (dest)->y, (dest)->x + (dest)->w - 1, (dest)->y + (dest)->h - 1, 0)
 */
+char *lwr = (Uint8 *)(0x00202000)+320*200;
 //--------------------------------------------------------------------------------------------------------------------------------------
 SDL_Surface * SDL_CreateRGBSurface(Uint32 flags, int width, int height, int depth, Uint32 Rmask, Uint32 Gmask, Uint32 Bmask, Uint32 Amask)
 {
 	SDL_Surface *surface;
 	surface = (SDL_Surface*)malloc(sizeof(SDL_Surface));
-	surface->pixels = (unsigned char*)malloc(sizeof(unsigned char)*width*height); 
+	surface->pixels = (unsigned char*)malloc(sizeof(unsigned char)*width*height);
 /*	surface->pixels = (Uint8 *)(0x00202000);*/
 /*	surface->pixels = screen->pixels; */
+/*	surface->pixels = (Uint8 *)lwr;*/
 	CHECKMALLOCRESULT(surface->pixels); 
 	surface->format->BytesPerPixel = 1;
 	surface->pitch =	screenWidth;
+
 	surface->w     =	width;
 	surface->h     =	height;
 	surface->flags =	flags | (SDL_HWSURFACE|SDL_ASYNCBLIT|SDL_RLEACCEL);
-
+/*	lwr+=(width*height);*/
 	return surface;
 }
 //--------------------------------------------------------------------------------------------------------------------------------------
@@ -939,11 +942,28 @@ int SDL_PollEvent(SDL_Event *event)
 #endif
 	return 0;
 }
+
+#if 0
+#define	PER_DGT_KR	(1 << 15)	/* Right Key				*/
+#define	PER_DGT_KL	(1 << 14)	/*  Left Key				*/
+#define	PER_DGT_KD	(1 << 13)	/*  Down Key				*/
+#define	PER_DGT_KU	(1 << 12)	/*    Up Key				*/
+#define	PER_DGT_ST	(1 << 11)	/* Start				*/
+#define	PER_DGT_TA	(1 << 10)	/* A Trigger				*/
+#define	PER_DGT_TC	(1 <<  9)	/* C Trigger				*/
+#define	PER_DGT_TB	(1 <<  8)	/* B Trigger				*/
+#define	PER_DGT_TR	(1 <<  7)	/* R Trigger				*/
+#define	PER_DGT_TX	(1 <<  6)	/* X Trigger				*/
+#define	PER_DGT_TY	(1 <<  5)	/* Y Trigger				*/
+#define	PER_DGT_TZ	(1 <<  4)	/* Z Trigger				*/
+#define	PER_DGT_TL	(1 <<  3)	/* L Trigger				*/
+#endif
+
 //--------------------------------------------------------------------------------------------------------------------------------------
 int SDL_WaitEvent(SDL_Event *event)
 {
 	event->type = SDL_NOEVENT;
-#if 1
+
 	if (event->type== SDL_KEYUP) {
 		event->type = SDL_NOEVENT;
 		event->key.keysym.sym = SDLK_FIRST;	
@@ -969,45 +989,109 @@ int SDL_WaitEvent(SDL_Event *event)
 			push |= ~Smpc_Peripheral[15].push;
 			data |= ~Smpc_Peripheral[15].data;
 		}
-		/*
-		 quit?
-		*/
 
-		if(data & PER_DGT_KD) {
-			event->type = SDL_KEYDOWN;
-			return 1;
-		}
-
-		if(data & PER_DGT_KU) {
+		if(!(data & PER_DGT_ST) && event->key.keysym.sym == SDLK_l && event->type == SDL_KEYDOWN) 
+		{
 			event->type = SDL_KEYUP;
 			return 1;
 		}
 
 		if(data & PER_DGT_ST) {
+			event->type = SDL_KEYDOWN;
+			event->key.keysym.sym = SDLK_l;
+			return 1;
+		}
+
+		if(data & PER_DGT_KR) {
+			event->type = SDL_KEYDOWN;
+			event->key.keysym.sym = SDLK_j;
+			return 1;
+		}
+
+		if(data & PER_DGT_KL) {
+			event->type = SDL_KEYDOWN;
+			event->key.keysym.sym = SDLK_h;
+			return 1;
+		}
+
+		if(data & PER_DGT_KD) {
+			event->type = SDL_KEYDOWN;
+			event->key.keysym.sym = SDLK_n;
+			return 1;
+		}
+		if(data & PER_DGT_TL) {
 			event->type = SDL_USEREVENT;
 			return 1;
 		}
 
-		if(data & PER_DGT_ST && data & PER_DGT_TA && data & PER_DGT_TB && data & PER_DGT_TC) {
+		
+		if(!(data & PER_DGT_TX) && event->key.keysym.sym == SDLK_ESCAPE && event->type == SDL_KEYDOWN) 
+		{
+			event->type = SDL_KEYUP;
+			return 1;
+		}
+		if(data & PER_DGT_TX) {/* pause */
+			event->type = SDL_KEYDOWN;
+			event->key.keysym.sym = SDLK_ESCAPE;
+			return 1;
+		}
+		if(!(data & PER_DGT_TA) && event->key.keysym.sym == SDLK_RETURN && event->type == SDL_KEYDOWN) 
+		{
+			event->type = SDL_KEYUP;
+			return 1;
+		}
+		if(data & PER_DGT_TA) { /* buttonPressed */
+			event->type = SDL_KEYDOWN;
+			event->key.keysym.sym = SDLK_RETURN;
+			return 1;
+		}
+		if(!(data & PER_DGT_TB) && event->key.keysym.sym == SDLK_k && event->type == SDL_KEYDOWN) 
+		{
+			event->type = SDL_KEYUP;
+			return 1;
+		}
+		if(data & PER_DGT_TB) { /* kill */
+			event->type = SDL_KEYDOWN;
+			event->key.keysym.sym = SDLK_k;
+			return 1;
+		}
+		if(!(data & PER_DGT_TC) && event->key.keysym.sym == SDLK_r && event->type == SDL_KEYDOWN) 
+		{
+			event->type = SDL_KEYUP;
+			return 1;
+		}
+		if(data & PER_DGT_TC) { /* resurrect */
+			event->type = SDL_KEYDOWN;
+			event->key.keysym.sym = SDLK_r;
+			return 1;
+		}
+		if(!(data & PER_DGT_TY) && event->key.keysym.sym == SDLK_SPACE && event->type == SDL_KEYDOWN) 
+		{
+			event->type = SDL_KEYUP;
+			return 1;
+		}
+		if(data & PER_DGT_TY) { /* showTime */
+			event->type = SDL_KEYDOWN;
+			event->key.keysym.sym = SDLK_SPACE;
+			return 1;
+		}
+		if(!(data & PER_DGT_TZ) && event->key.keysym.sym == SDLK_c && event->type == SDL_KEYDOWN) 
+		{
+			event->type = SDL_KEYUP;
+			return 1;
+		}
+		if(data & PER_DGT_TZ) { /* showScreens */
+			event->type = SDL_KEYDOWN;
+			event->key.keysym.sym = SDLK_c;
+			return 1;
+		}
+	
+		if(data & PER_DGT_ST && data & PER_DGT_TA && data & PER_DGT_TB && data & PER_DGT_TC) 
+		{
 			event->type = SDL_QUIT;
 			return 1;
 		}		
-		/*
-			move cursor
-		*/
-/*		if(data & PER_DGT_ST) {
-			event->type = SDL_KEYDOWN;
-			event->key.keysym.sym = SDLK_SPACE;
-			return;
-		}
-
-		if(!(data & PER_DGT_ST) 
-			&& event->key.keysym.sym == SDLK_SPACE
-			&& event->type                     == SDL_KEYDOWN) {
-			event->type = SDL_KEYUP;
-			return;
-		}
-  */
+#if 0
 		if(data & PER_DGT_TA) {
 			event->type = SDL_KEYDOWN;
 			event->key.keysym.sym = SDLK_KP_ENTER;
@@ -1098,11 +1182,11 @@ int SDL_WaitEvent(SDL_Event *event)
 			event->type = SDL_KEYUP;
 			return 1;
 		}
-
+#endif
 		//slSynch();
 		
 	} while(event->type == SDL_NOEVENT);
-#endif
+
 	return 0;
 }
 //--------------------------------------------------------------------------------------------------------------------------------------
@@ -1233,6 +1317,7 @@ SDL_TimerID SDL_AddTimer(Uint32 interval, SDL_NewTimerCallback callback, void *p
 {
 //	TIM_FRT_INIT(TIM_CKS_32);
 //	TIM_FRT_SET_16(0);
+	slIntFunction(callback);
 	return 0;
 }
 //--------------------------------------------------------------------------------------------------------------------------------------
