@@ -50,9 +50,13 @@ tKey inputCreateKey() {
 
 int editAction(tKey* key,SDLKey k) {
 	key->actionPerformed=other;
+
+if(k==108) /* vbt : petit hack en attendant mieux */
+key->status=2;
+
 	/* Control actions */
 	if (inputGetCtrl(key->status)) {
-slPrint("inputGetCtrl(yes)                                     ",slLocate(2,21));
+	slPrint("inputGetCtrl(yes)                                     ",slLocate(2,4));
 		switch (k) {
 		case SDLK_g:
 			key->actionPerformed=save;
@@ -84,8 +88,9 @@ slPrint("inputGetCtrl(yes)                                     ",slLocate(2,21))
 	}
 	else
 	{
-	slPrint("inputGetCtrl(no)                                     ",slLocate(2,21));
+	slPrint("inputGetCtrl(no)                                     ",slLocate(2,4));
 	}
+
 	/* Shift actions */
 	if (inputGetShift(key->status)) {
 		switch (k) {
@@ -219,6 +224,7 @@ int editKey(tKey* key, SDLKey sdlkey, int status) {
 
 int inputGetEvent(tKey* key) {
 	SDL_Event event;
+char toto[50];
 	
 	while(SDL_WaitEvent(&event))
 	{
@@ -226,6 +232,7 @@ int inputGetEvent(tKey* key) {
 		switch (event.type) {
 		case SDL_KEYDOWN:
 			editKey(key,event.key.keysym.sym,1);
+
 			if (editAction(key,event.key.keysym.sym)) return 0;
 			break;
 		case SDL_KEYUP:
@@ -251,22 +258,22 @@ int inputGetEvent(tKey* key) {
 }
 
 static SDL_TimerID timer;
-int vbt5=0;
+int timerValue=0;
 Uint32 timer_callback(Uint32 interval, void *param)
 {
-	char toto[50];
-sprintf(toto,"timer_callback %d        ",vbt5++);
-slPrint(toto,slLocate(10,1));	
+	if(timerValue==5)
+	{
+		SDL_Event event;
 
-	SDL_Event event;
-
-	/* Push a user-defined event on the event queue: */
-	event.type = SDL_USEREVENT;
-	event.user.code = 0;
-	event.user.data1 = NULL;
-	event.user.data2 = NULL;
-	SDL_PushEvent(&event);
-
+		/* Push a user-defined event on the event queue: */
+		event.type = SDL_USEREVENT;
+		event.user.code = 0;
+		event.user.data1 = NULL;
+		event.user.data2 = NULL;
+		SDL_PushEvent(&event);
+		timerValue=0;
+	}
+	timerValue++;
 	return interval; /* Timer must raise an alarm again after 'interval' ms. */
 }
 

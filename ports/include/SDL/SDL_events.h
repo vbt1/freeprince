@@ -214,23 +214,24 @@ typedef struct {
 } SDL_SysWMEvent;
 
 /* General event structure */
-typedef union {
+typedef struct {
 	Uint8 type;
-	SDL_ActiveEvent active;
-	SDL_KeyboardEvent key;
-	SDL_MouseMotionEvent motion;
-	SDL_MouseButtonEvent button;
-	SDL_JoyAxisEvent jaxis;
-	SDL_JoyBallEvent jball;
-	SDL_JoyHatEvent jhat;
-	SDL_JoyButtonEvent jbutton;
-	SDL_ResizeEvent resize;
-	SDL_ExposeEvent expose;
-	SDL_QuitEvent quit;
-	SDL_UserEvent user;
-	SDL_SysWMEvent syswm;
-} SDL_Event;
+	struct {
+		struct {
+			Uint16 sym;
+		} keysym;
+	} key;
+	struct {
+		Uint16 x,y;
+	} button;
 
+	struct {
+		Uint8 type;	/* SDL_USEREVENT through SDL_NUMEVENTS-1 */
+		int code;	/* User defined event code */
+		void *data1;	/* User defined data pointer */
+		void *data2;	/* User defined data pointer */
+	} user;
+} SDL_Event;
 
 /* Function prototypes */
 

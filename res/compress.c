@@ -228,33 +228,27 @@ int mExpandGraphic(const unsigned char* data,tImage *image, int dataSizeInBytes)
 
 	switch (getAlgor(image->type)) {
 		case COMPRESS_RAW: /* No Compression Algorithm */
-slPrint("COMPRESS_RAW ",slLocate(2,4));
 			if ((image->pix=getMemory(imageSizeInBytes))==NULL) return COMPRESS_RESULT_FATAL;
 			memcpy(image->pix,data,imageSizeInBytes);
 			result=COMPRESS_RESULT_SUCCESS;
 			break;
 		case COMPRESS_RLE_LR: /* RLE Left to Right Compression Algorithm */
-slPrint("COMPRESS_RLE_LR ",slLocate(2,4));
 			result=expandRle(data,dataSizeInBytes,image,imageSizeInBytes);
 			break;
 		case COMPRESS_RLE_UD: /* RLE Up to Down Compression Algorithm */
-slPrint("COMPRESS_RLE_UD ",slLocate(2,4));
 			result=expandRle(data,dataSizeInBytes,image,imageSizeInBytes);
 			if (result==COMPRESS_RESULT_FATAL) return COMPRESS_RESULT_FATAL;
 			transposeImage(image,imageSizeInBytes);
 			break;
 		case COMPRESS_LZG_LR: /* LZ Groody Left to Right Compression Algorithm */
-slPrint("COMPRESS_LZG_LR ",slLocate(2,4));
 			result=expandLzg(data,dataSizeInBytes,image,imageSizeInBytes);
 			break;
 		case COMPRESS_LZG_UD: /* LZ Groody Up to Down Compression Algorithm */
-slPrint("COMPRESS_LZG_UD ",slLocate(2,4));
 			result=expandLzg(data,dataSizeInBytes,image,imageSizeInBytes);
 			if (result==COMPRESS_RESULT_FATAL) return COMPRESS_RESULT_FATAL;
 			transposeImage(image,imageSizeInBytes);
 			break;
 		default:
-slPrint("COMPRESS_RESULT_FATAL ",slLocate(2,4));
 			result=COMPRESS_RESULT_FATAL;
 			break;
 	}

@@ -339,12 +339,13 @@ void* outputLoadBitmap(const unsigned char* data, int size,
 	}
 
 char toto[50];
+/*
  sprintf(toto,"w%d h %d                ",loadedSurface->surface->w,loadedSurface->surface->h); 
 slPrint(toto,slLocate(2,10));
 
  sprintf(toto,"left %d bottom %d left %d bottom %d         ",loadedSurface->left,loadedSurface->bottom,left,bottom); 
 slPrint(toto,slLocate(2,11));
-
+*/
 	/* Write pixels */
 	if (palette.colors==16) {
 		w = (w + 1) / 2;
@@ -421,7 +422,7 @@ if (dest.y>200 || dest.y<0)
 {
 	return;
 }
-
+/*
 if (dest.w>320)
 {
 	dest.w=320;
@@ -430,7 +431,7 @@ if (dest.h>200)
 {
 	dest.h=200;
 }
-
+*/
 sprintf(toto,"src w%d h %d p %d        ",s->w,s->h,s->pitch);
 slPrint(toto,slLocate(10,15));	
 sprintf(toto,"dst x %d y %d w%d h %d        ",dest.x,dest.y,dest.w,dest.h);

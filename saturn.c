@@ -25,6 +25,7 @@ unsigned screenWidth = 320;
 unsigned screenHeight = 200;
 unsigned screenBits = 8;
 extern SDL_Surface *screen;
+SDL_Event globalevent;
 Uint16	palo[256]; // vbt : la palette est globale
 #ifdef VBT
 int CdUnlock();
@@ -178,11 +179,11 @@ static const Sint8	logtbl[] = {
 //    slBMPaletteNbg0(1);
     // screen coordinates like in SDL
     slBitMapBase(0, 0);
-    slScrAutoDisp(NBG0ON | NBG1ON);
+    slScrAutoDisp(NBG0OFF | NBG1ON);
 
-/*	screen->pixels = (unsigned char*)malloc(sizeof(unsigned char)*width*height);*/
-	screen->pixels = (Uint8 *)(0x00202000); 
-/*	CHECKMALLOCRESULT(screen->pixels); */
+	screen->pixels = (unsigned char*)malloc(sizeof(unsigned char)*width*height);
+/*	screen->pixels = (Uint8 *)(0x00202000); */
+	CHECKMALLOCRESULT(screen->pixels); 
 	screen->format->BytesPerPixel = 1;
 	screen->pitch = width;
 	screen->flags = (SDL_HWSURFACE|SDL_ASYNCBLIT|SDL_RLEACCEL);
@@ -193,7 +194,7 @@ static const Sint8	logtbl[] = {
 //--------------------------------------------------------------------------------------------------------------------------------------
 int SDL_SetColors(SDL_Surface *surface, 	SDL_Color *colors, int firstcolor, int ncolors)
 {
-	Uint16	palo[256];
+//	Uint16	palo[256];
 	unsigned int i;
 
 	for(i=firstcolor;i<ncolors;i++)
@@ -233,29 +234,25 @@ int SDL_InitSubSystem(Uint32 flags)
 	if(flags &= SDL_INIT_AUDIO)
 	{
 		char sound_map[] =  {0xff,0xff,0xff,0xff};//,0xff,0xff,0xff,0xff,0xff,0xff,0xff};
-	//slPrint("init sound                                    ",slLocate(2,21));
 #ifdef ACTION_REPLAY
 		slInitSound(sddrvstsk , sizeof(sddrvstsk) , (Uint8 *)sound_map , sizeof(sound_map)) ;
 #else
 #define	SDDRV_NAME	"SDDRVS.TSK"
 #define	SDDRV_SIZE	26610 //0x7000
 #define	SDDRV_ADDR	0x00202000//0x6080000
-unsigned char *tutu;
-		tutu = (unsigned char *)SDDRV_ADDR;
-		GFS_Load(GFS_NameToId((Sint8*)SDDRV_NAME),0,(void *) tutu,SDDRV_SIZE);
-		slInitSound(tutu , SDDRV_SIZE , (Uint8 *)sound_map , sizeof(sound_map)) ;
-		tutu = NULL;		
+unsigned char *drv;
+		drv = (unsigned char *)SDDRV_ADDR;
+		GFS_Load(GFS_NameToId((Sint8*)SDDRV_NAME),0,(void *) drv,SDDRV_SIZE);
+		slInitSound(drv , SDDRV_SIZE , (Uint8 *)sound_map , sizeof(sound_map)) ;
+		drv = NULL;		
   		//slInitSound(sddrvstsk , sizeof(sddrvstsk) , (Uint8 *)sound_map , sizeof(sound_map)) ;
-	//slPrint("                                    ",slLocate(2,21));
 #endif
 	}
 
 	if(flags &= SDL_INIT_TIMER)
 	{
-	//slPrint("init timer                                    ",slLocate(2,21));		
 		TIM_FRT_INIT(TIM_CKS_32);
 		TIM_FRT_SET_16(0);
-	//slPrint("                                    ",slLocate(2,21));		
 	}
 
 	return 0;
@@ -344,8 +341,8 @@ Uint32 SDL_MapRGB (SDL_PixelFormat *format, Uint8 r, Uint8 g, Uint8 b)
 //--------------------------------------------------------------------------------------------------------------------------------------
 void SDL_FreeSurface(SDL_Surface *surface)
 {
-	if(surface->pixels)
-		free(surface->pixels);
+/*	if(surface->pixels)
+		free(surface->pixels);*/
 	return;
 }
 //--------------------------------------------------------------------------------------------------------------------------------------
@@ -534,29 +531,25 @@ int SDL_UpperBlit (SDL_Surface *src, SDL_Rect *srcrect, SDL_Surface *dst, SDL_Re
 	//slBMPut((dest) == NULL ? 0 : ((SDL_Rect *)dest)->x, (dest) == NULL ? 0 : ((SDL_Rect *)dest)->y, ((dest) == NULL ? 0 : ((SDL_Rect *)dest)->x) + images[img].w - 1, ((dest) == NULL ? 0 : ((SDL_Rect *)dest)->y) + images[img].h - 1, images[img].data);
  //slPrint("SDL_UpperBlit start       ",slLocate(3,22)); 
  
-memcpy((Uint8 *)(0x00200000),src->pixels,src->w*src->h);
-
-if((srcrect)!=NULL)
-{
-	slPrint("SDL_UpperBlit avec srcrect       ",slLocate(3,21));
-	for( Sint16 i=0;i<srcrect->h;i++)
+	if((srcrect)!=NULL)
 	{
-		memcpy((unsigned long*)(dst->pixels + ((i + dstrect->y) * dst->pitch) + dstrect->x),
-			   (unsigned long*)(src->pixels + ((i + srcrect->y) * src->w) + srcrect->x),srcrect->w);
-	}	
-}
-else
-{
-	slPrint("SDL_UpperBlit sans srcrect       ",slLocate(3,21));
-	for( Sint16 i=0;i<dstrect->h;i++)
-	{
-//		memcpy((unsigned long*)(dst->pixels + ((i + (dstrect->y)) * dst->pitch) + dstrect->x),
-//			   (unsigned long*)(src->pixels + ((i + 0) * dstrect->w) + 0),dstrect->w);
-		memcpy((unsigned long*)(dst->pixels + ((i + (dstrect->y)) * dst->pitch) + dstrect->x),
-			   (unsigned long*)(src->pixels + (i * dst->pitch)),dstrect->w);
-
+		for( Sint16 i=0;i<srcrect->h;i++)
+		{
+			memcpy((unsigned long*)(dst->pixels + ((i + dstrect->y) * dst->pitch) + dstrect->x),
+				   (unsigned long*)(src->pixels + ((i + srcrect->y) * src->w) + srcrect->x),srcrect->w);
+		}	
 	}
-}
+	else
+	{
+		for( Sint16 i=0;i<dstrect->h;i++)
+		{
+	//		memcpy((unsigned long*)(dst->pixels + ((i + (dstrect->y)) * dst->pitch) + dstrect->x),
+	//			   (unsigned long*)(src->pixels + ((i + 0) * dstrect->w) + 0),dstrect->w);
+			memcpy((unsigned long*)(dst->pixels + ((i + (dstrect->y)) * dst->pitch) + dstrect->x),
+				   (unsigned long*)(src->pixels + (i * dst->pitch)),dstrect->w);
+
+		}
+	}
 	slSynch();
 	return 0;
 }
@@ -615,24 +608,24 @@ if((dst)!=NULL)
 /*
   slBMBoxFill((dest)->x, (dest)->y, (dest)->x + (dest)->w - 1, (dest)->y + (dest)->h - 1, 0)
 */
-char *lwr = (Uint8 *)(0x00202000)+320*200;
+char *lwr = (Uint8 *)((0x00202000)); //+320*200);
 //--------------------------------------------------------------------------------------------------------------------------------------
 SDL_Surface * SDL_CreateRGBSurface(Uint32 flags, int width, int height, int depth, Uint32 Rmask, Uint32 Gmask, Uint32 Bmask, Uint32 Amask)
 {
 	SDL_Surface *surface;
 	surface = (SDL_Surface*)malloc(sizeof(SDL_Surface));
-	surface->pixels = (unsigned char*)malloc(sizeof(unsigned char)*width*height);
+/*	surface->pixels = (unsigned char*)malloc(sizeof(unsigned char)*width*height);*/
 /*	surface->pixels = (Uint8 *)(0x00202000);*/
 /*	surface->pixels = screen->pixels; */
-/*	surface->pixels = (Uint8 *)lwr;*/
-	CHECKMALLOCRESULT(surface->pixels); 
+	surface->pixels = (Uint8 *)lwr;
+/*	CHECKMALLOCRESULT(surface->pixels); */
 	surface->format->BytesPerPixel = 1;
 	surface->pitch =	screenWidth;
 
 	surface->w     =	width;
 	surface->h     =	height;
 	surface->flags =	flags | (SDL_HWSURFACE|SDL_ASYNCBLIT|SDL_RLEACCEL);
-/*	lwr+=(width*height);*/
+	lwr+=(width*height);
 	return surface;
 }
 //--------------------------------------------------------------------------------------------------------------------------------------
@@ -723,6 +716,11 @@ void SDL_WM_SetIcon(SDL_Surface *icon, Uint8 *mask)
 /*
 sc_1, sc_2, sc_3, sc_4
 */
+
+int ctrlPadStatusCurrent = 0;
+int ctrlPadStatusOld = 0;
+int ctrlPadStatusNew = 0;
+int ctrlPadStatusDelta = 0;
 
 int SDL_PollEvent(SDL_Event *event)
 {
@@ -882,7 +880,6 @@ int SDL_PollEvent(SDL_Event *event)
 			break;	
 
 			case 7:/*PER_DGT_ST: */
-				////slPrint("gros connard",slLocate(3,24));
 			event->key.keysym.sym = SDLK_ESCAPE;
 			break;	
 
@@ -895,17 +892,14 @@ int SDL_PollEvent(SDL_Event *event)
 			break;	
 
 			case 1:/*PER_DGT_KD: */
-				////slPrint("gros ggggg",slLocate(3,20));
 			event->key.keysym.sym = SDLK_KP2;
 			break;	
 
 			case 0:/*PER_DGT_KU: */
-				////slPrint("gros ggggg",slLocate(3,20));
 			event->key.keysym.sym = SDLK_KP8;
 			break;	
 
 			default:
-				////slPrint("pas trouvé",slLocate(3,20));
 				//event->key.keysym.sym =999;
 				//event->type = SDL_NOEVENT;
 				event->key.keysym.sym = SDLK_LAST;//SDLK_FIRST;	  
@@ -981,24 +975,35 @@ int SDL_WaitEvent(SDL_Event *event)
 		 take pressed buttons of both pads, to enable two player
 		 */
 		Uint16 push = 0, data = 0;
+		ctrlPadStatusOld = ctrlPadStatusCurrent;
+
 		if(Per_Connect1) {
 			push = ~Smpc_Peripheral[0].push;
-			data = ~Smpc_Peripheral[0].data;
+			ctrlPadStatusCurrent = ~Smpc_Peripheral[0].data;
+			data = ctrlPadStatusCurrent;
 		}
-		if(Per_Connect2) {
-			push |= ~Smpc_Peripheral[15].push;
-			data |= ~Smpc_Peripheral[15].data;
+		ctrlPadStatusNew = ctrlPadStatusCurrent & (~ctrlPadStatusOld);
+		ctrlPadStatusDelta = ctrlPadStatusCurrent  ^ ctrlPadStatusOld;
+
+
+		if(data & PER_DGT_ST) { /* load */
+slPrint("PER_DGT_ST SDL_KEYDOWN        ",slLocate(2,1));
+			event->type = SDL_KEYDOWN;
+			event->key.keysym.sym = SDLK_l;
+			return 1;
 		}
 
-		if(!(data & PER_DGT_ST) && event->key.keysym.sym == SDLK_l && event->type == SDL_KEYDOWN) 
+		if(!(data & PER_DGT_ST) && (ctrlPadStatusOld & PER_DGT_ST)) 
 		{
+slPrint("data & PER_DGT_ST SDL_KEYUP                                  ",slLocate(2,1));
+			event->key.keysym.sym = SDLK_l;
 			event->type = SDL_KEYUP;
 			return 1;
 		}
 
-		if(data & PER_DGT_ST) {
+		if(data & PER_DGT_TX) {
 			event->type = SDL_KEYDOWN;
-			event->key.keysym.sym = SDLK_l;
+			event->key.keysym.sym = SDLK_ESCAPE;
 			return 1;
 		}
 
@@ -1019,11 +1024,6 @@ int SDL_WaitEvent(SDL_Event *event)
 			event->key.keysym.sym = SDLK_n;
 			return 1;
 		}
-		if(data & PER_DGT_TL) {
-			event->type = SDL_USEREVENT;
-			return 1;
-		}
-
 		
 		if(!(data & PER_DGT_TX) && event->key.keysym.sym == SDLK_ESCAPE && event->type == SDL_KEYDOWN) 
 		{
@@ -1091,6 +1091,14 @@ int SDL_WaitEvent(SDL_Event *event)
 			event->type = SDL_QUIT;
 			return 1;
 		}		
+/* vbt : controle de l'événement timer en dernier */
+		if(globalevent.type != SDL_NOEVENT)
+		{
+			event->type = globalevent.type;
+			globalevent.type = SDL_NOEVENT;
+			return 1;
+		}
+
 #if 0
 		if(data & PER_DGT_TA) {
 			event->type = SDL_KEYDOWN;
@@ -1192,6 +1200,7 @@ int SDL_WaitEvent(SDL_Event *event)
 //--------------------------------------------------------------------------------------------------------------------------------------
 int SDL_PushEvent(SDL_Event *event)
 {
+	globalevent.type=event->type;
 	return 0;
 }
 //--------------------------------------------------------------------------------------------------------------------------------------

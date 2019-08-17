@@ -214,6 +214,7 @@ typedef struct {
 } SDL_SysWMEvent;
 
 /* General event structure */
+/*
 typedef union {
 	Uint8 type;
 	SDL_ActiveEvent active;
@@ -229,6 +230,25 @@ typedef union {
 	SDL_QuitEvent quit;
 	SDL_UserEvent user;
 	SDL_SysWMEvent syswm;
+} SDL_Event;
+*/
+typedef struct {
+	Uint8 type;
+	struct {
+		struct {
+			Uint16 sym;
+		} keysym;
+	} key;
+	struct {
+		Uint16 x,y;
+	} button;
+
+	struct {
+		Uint8 type;	/* SDL_USEREVENT through SDL_NUMEVENTS-1 */
+		int code;	/* User defined event code */
+		void *data1;	/* User defined data pointer */
+		void *data2;	/* User defined data pointer */
+	} user;
 } SDL_Event;
 
 

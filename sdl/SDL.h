@@ -202,6 +202,13 @@ typedef struct {
 	struct {
 		Uint16 x,y;
 	} button;
+
+	struct {
+		Uint8 type;	/* SDL_USEREVENT through SDL_NUMEVENTS-1 */
+		int code;	/* User defined event code */
+		void *data1;	/* User defined data pointer */
+		void *data2;	/* User defined data pointer */
+	} user;
 } SDL_Event;
 
 typedef struct {
