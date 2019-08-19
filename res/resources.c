@@ -144,12 +144,7 @@ tData* resLoad(long id) {
 
 	tData* result;
 	tMemory raw;
-/*
-	int mask=res_get_part_mods(id);
-	int total=res_get_part_size(id);
-	int from=res_get_part_from(id);
-	int type=res_get_part_type(id);
-*/
+
 	int mask=res_get_part_mods(id);
 	int total=res_get_part_size(id);
 	int from=res_get_part_from(id);

@@ -40,6 +40,9 @@ output.h: Free Prince : Output Devices Handler
 
 #include "resources.h"
 
+#define ANIMS_LAYERTYPE_TOP     0
+#define ANIMS_LAYERTYPE_BOTTOM  1
+
 typedef struct tColor{
 	unsigned char r;
 	unsigned char g;
@@ -80,7 +83,7 @@ void outputFreeBitmap(void* image);
 	*/
 
  /* Graph: Primitives for the kernel */
-void outputDrawBitmap(void* image,int x, int y);
+void outputDrawBitmap(unsigned char layer, void* image,int x, int y);
  /* Draws an abstract image
 	*/
 

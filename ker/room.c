@@ -140,7 +140,7 @@ int wallGetCase(tTile left, tTile tile, tTile right) {
  * Hardcoded Drawing functions
  */
 
-#define drawAll(x,y,a) outputDrawBitmap(roomGfx.environment->pFrames[a],(x),(y))
+#define drawAll(x,y,a) outputDrawBitmap(NULL,roomGfx.environment->pFrames[a],(x),(y))
 
 /*#define isIn(a,TILES_UNPRESSED)  (((tPressable*)a.moreInfo)->action==eNormal)*/
 #define chopperGetFrame(a) (((tDanger*)a.moreInfo)->frame)
@@ -151,14 +151,14 @@ int wallGetCase(tTile left, tTile tile, tTile right) {
 #define touchLoose(a)      (((tDanger*)a.moreInfo)->action=eLosMoving)
 
 /* Special drawings */
-#define drawGateTop(x,y,frame) outputDrawBitmap(roomGfx.environment->pFrames[35-((frame)&7)],x,y)
-#define drawTorchFire(x,y) outputDrawBitmap(roomGfx.torch->pFrames[((room->level->time)+2*x+y)%(roomGfx.torch->frames)],x,y)
-#define drawSword(x,y) outputDrawBitmap(roomGfx.sword->pFrames[(room->level->time%20)==0],x,y)
-#define drawPotionSmallBase(x,y) outputDrawBitmap(roomGfx.potionBase->pFrames[0],x,y)
-#define drawPotionBigBase(x,y) outputDrawBitmap(roomGfx.potionBase->pFrames[1],x,y)
-#define drawPotionRedBubbles(x,y,isBig) outputDrawBitmap(roomGfx.potionAnimRed->pFrames[((room->level->time)+2*x+y)%(roomGfx.potionAnimRed->frames)],x,y-5*(isBig))
-#define drawPotionGreenBubbles(x,y,isBig) outputDrawBitmap(roomGfx.potionAnimGreen->pFrames[((room->level->time)+2*x+y)%(roomGfx.potionAnimGreen->frames)],x,y-5*(isBig))
-#define drawPotionBlueBubbles(x,y,isBig) outputDrawBitmap(roomGfx.potionAnimBlue->pFrames[((room->level->time)+2*x+y)%(roomGfx.potionAnimBlue->frames)],x,y-5*(isBig))
+#define drawGateTop(x,y,frame) outputDrawBitmap(NULL,roomGfx.environment->pFrames[35-((frame)&7)],x,y)
+#define drawTorchFire(x,y) outputDrawBitmap(NULL,roomGfx.torch->pFrames[((room->level->time)+2*x+y)%(roomGfx.torch->frames)],x,y)
+#define drawSword(x,y) outputDrawBitmap(NULL,roomGfx.sword->pFrames[(room->level->time%20)==0],x,y)
+#define drawPotionSmallBase(x,y) outputDrawBitmap(NULL,roomGfx.potionBase->pFrames[0],x,y)
+#define drawPotionBigBase(x,y) outputDrawBitmap(NULL,roomGfx.potionBase->pFrames[1],x,y)
+#define drawPotionRedBubbles(x,y,isBig) outputDrawBitmap(NULL,roomGfx.potionAnimRed->pFrames[((room->level->time)+2*x+y)%(roomGfx.potionAnimRed->frames)],x,y-5*(isBig))
+#define drawPotionGreenBubbles(x,y,isBig) outputDrawBitmap(NULL,roomGfx.potionAnimGreen->pFrames[((room->level->time)+2*x+y)%(roomGfx.potionAnimGreen->frames)],x,y-5*(isBig))
+#define drawPotionBlueBubbles(x,y,isBig) outputDrawBitmap(NULL,roomGfx.potionAnimBlue->pFrames[((room->level->time)+2*x+y)%(roomGfx.potionAnimBlue->frames)],x,y-5*(isBig))
 
 typedef enum {layTritop,layTribot,layBase}tLooseLayer;
 void drawLoose(int x, int y, int frame,tLooseLayer layer) {

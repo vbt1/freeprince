@@ -34,7 +34,7 @@ static char rcsid =
 
 #include "SDL_types.h"
 #include "SDL_mutex.h"
-#include "SDL_rwops.h"
+//#include "SDL_rwops.h"
 
 #include "begin_code.h"
 /* Set up for C function definitions, even when using C++ */

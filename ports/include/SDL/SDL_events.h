@@ -206,8 +206,10 @@ typedef struct {
 } SDL_UserEvent;
 
 /* If you want to use this event, you should include SDL_syswm.h */
-struct SDL_SysWMmsg;
-typedef struct SDL_SysWMmsg SDL_SysWMmsg;
+typedef struct  {
+	unsigned int msg;			/* The type of message */
+}SDL_SysWMmsg;
+
 typedef struct {
 	Uint8 type;
 	SDL_SysWMmsg *msg;
@@ -272,7 +274,7 @@ extern DECLSPEC int SDLCALL SDL_PollEvent(SDL_Event *event);
    was an error while waiting for events.  If 'event' is not NULL, the next
    event is removed from the queue and stored in that area.
  */
-extern DECLSPEC int SDLCALL SDL_WaitEvent(SDL_Event *event);
+extern int SDL_WaitEvent(SDL_Event *event);
 
 /* Add an event to the event queue.
    This function returns 0 on success, or -1 if the event queue was full

@@ -20,6 +20,8 @@
 //#include "images.h"
 #include "SDL_keysym.h"
 #include "SDL_types.h"
+#include "SDL_events.h"
+
 #define		CHECKMALLOCRESULT(x) if(!(x)) Quit("Out of memory at %s:%i", __FILE__, __LINE__)
 
 #define		NBG1_MAP_ADR		( VDP2_VRAM_B1 + 0x18000 )
@@ -84,39 +86,14 @@ extern GfsDirName dir_name[MAX_DIR];
 
 
 //enum {NONE, SDL_QUIT, SDL_KEYDOWN, SDL_KEYUP,SDLK_ESCAPE2, SDL_MOUSEBUTTONDOWN};
+struct {
+	int firsttime;    /* if we check against the delay or repeat value */
+	int delay;        /* the delay before we start repeating */
+	int interval;     /* the delay between key repeat events */
+	Uint32 timestamp; /* the time the first keydown event occurred */
 
-/* Event enumerations */
-enum { SDL_NOEVENT = 0,			/* Unused (do not remove) */
-       SDL_ACTIVEEVENT,			/* Application loses/gains visibility */
-       SDL_KEYDOWN,			/* Keys pressed */
-       SDL_KEYUP,			/* Keys released */
-       SDL_MOUSEMOTION,			/* Mouse moved */
-       SDL_MOUSEBUTTONDOWN,		/* Mouse button pressed */
-       SDL_MOUSEBUTTONUP,		/* Mouse button released */
-       SDL_JOYAXISMOTION,		/* Joystick axis motion */
-       SDL_JOYBALLMOTION,		/* Joystick trackball motion */
-       SDL_JOYHATMOTION,		/* Joystick hat position change */
-       SDL_JOYBUTTONDOWN,		/* Joystick button pressed */
-       SDL_JOYBUTTONUP,			/* Joystick button released */
-       SDL_QUIT,			/* User-requested quit */
-       SDL_SYSWMEVENT,			/* System specific event */
-       SDL_EVENT_RESERVEDA,		/* Reserved for future use.. */
-       SDL_EVENT_RESERVEDB,		/* Reserved for future use.. */
-       SDL_VIDEORESIZE,			/* User resized video mode */
-       SDL_VIDEOEXPOSE,			/* Screen needs to be redrawn */
-       SDL_EVENT_RESERVED2,		/* Reserved for future use.. */
-       SDL_EVENT_RESERVED3,		/* Reserved for future use.. */
-       SDL_EVENT_RESERVED4,		/* Reserved for future use.. */
-       SDL_EVENT_RESERVED5,		/* Reserved for future use.. */
-       SDL_EVENT_RESERVED6,		/* Reserved for future use.. */
-       SDL_EVENT_RESERVED7,		/* Reserved for future use.. */
-       /* Events SDL_USEREVENT through SDL_MAXEVENTS-1 are for your use */
-       SDL_USEREVENT = 24,
-       /* This last event is only for bounding internal arrays
-	  It is the number of bits in the event mask datatype -- Uint32
-        */
-       SDL_NUMEVENTS = 32
-};
+	SDL_Event evt;    /* the event we are supposed to repeat */
+} SDL_KeyRepeat;
 
 typedef enum {
 	SDL_GRAB_QUERY = -1,
@@ -191,7 +168,7 @@ typedef struct {
 	Sint16 x, y;
 	Uint16 w, h;
 } SDL_Rect;
-
+/*
 typedef struct {
 	Uint8 type;
 	struct {
@@ -204,13 +181,18 @@ typedef struct {
 	} button;
 
 	struct {
-		Uint8 type;	/* SDL_USEREVENT through SDL_NUMEVENTS-1 */
-		int code;	/* User defined event code */
-		void *data1;	/* User defined data pointer */
-		void *data2;	/* User defined data pointer */
+		Uint8 type;	
+		int code;	
+		void *data1;
+		void *data2;
 	} user;
-} SDL_Event;
 
+	struct {
+		Uint8 type;
+		SDL_SysWMmsg *msg;
+	} syswm;
+} SDL_Event;
+*/
 typedef struct {
 	Uint8 format;
 } SDL_Screen;
@@ -383,8 +365,8 @@ typedef struct {
 #define SDL_ShowCursor(arg1){}
 #define SDL_BlitSurface SDL_UpperBlit
 
-extern int SDL_WaitEvent(SDL_Event *event);
-extern int SDL_PollEvent(SDL_Event *event);
+//extern int SDL_WaitEvent(SDL_Event *event);
+//extern int SDL_PollEvent(SDL_Event *event);
 //extern void SDL_Delay(int delay);
 extern void SDL_WM_SetCaption(const char *title, const char *icon);
 extern const SDL_VideoInfo * SDL_GetVideoInfo(void);
@@ -482,7 +464,7 @@ static char rcsid =
 #include "SDL_types.h"
 #include "SDL_getenv.h"
 #include "SDL_error.h"
-#include "SDL_rwops.h"
+//#include "SDL_rwops.h"
 #include "SDL_timer.h"
 #include "SDL_audio.h"
 #include "SDL_cdrom.h"

@@ -34,7 +34,7 @@ static char rcsid =
 #include "SDL_types.h"
 #include "SDL_getenv.h"
 #include "SDL_error.h"
-#include "SDL_rwops.h"
+/*#include "SDL_rwops.h"*/
 #include "SDL_timer.h"
 #include "SDL_audio.h"
 #include "SDL_cdrom.h"

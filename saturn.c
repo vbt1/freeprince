@@ -1,5 +1,6 @@
 
 #include "sdl/SDL.h"
+#include "sdl/SDL_events.h"
 #include "sdl/SDL_mixer.h"
 #include "sdl/SDL_timer.h"
 #include <stdlib.h>  /* malloc */
@@ -18,13 +19,13 @@
 
 //}
 //#define VBT
-
 //
 #define STARTMUSIC 0
 unsigned screenWidth = 320;
 unsigned screenHeight = 200;
 unsigned screenBits = 8;
 extern SDL_Surface *screen;
+extern SDL_Surface *screen0;
 SDL_Event globalevent;
 Uint16	palo[256]; // vbt : la palette est globale
 #ifdef VBT
@@ -54,10 +55,10 @@ void SCU_DMAWait(void);
 GfsDirName dir_name[MAX_DIR];
 #endif
 
-   /*
-#define SDL_FillRect(arg1, dest, arg3)	\
-	slBMBoxFill((dest)->x, (dest)->y, (dest)->x + (dest)->w - 1, (dest)->y + (dest)->h - 1, 0)
-	 */
+/*   
+#define SDL_FillRect(arg1, dest, color)	\
+	slBMBoxFill((dest)->x, (dest)->y, (dest)->x + (dest)->w - 1, (dest)->y + (dest)->h - 1, color)
+*/	 
 void Pal2CRAM( Uint16 *Pal_Data , void *Col_Adr , Uint32 suu );
 void InitCD();
 void	InitCDBlock(void);
@@ -130,7 +131,7 @@ static const Sint8	logtbl[] = {
  */
 //SDL_Screen scr;
 //SDL_Screen *screen = &scr;
-
+// char *lw = (Uint8 *)(0x00202000);
 //--------------------------------------------------------------------------------------------------------------------------------------
  SDL_Surface * SDL_SetVideoMode  (int width, int height, int bpp, Uint32 flags)
 {
@@ -174,12 +175,17 @@ static const Sint8	logtbl[] = {
     slInitBitMap(bmNBG1, BM_512x256, (void *)NBG1_CEL_ADR);
     slBMPaletteNbg1(1);
 
+	slScrPosNbg0(toFIXED(0) , toFIXED(0));
+    slInitBitMap(bmNBG0, BM_512x256, (void *)NBG0_CEL_ADR);
+    slBMPaletteNbg0(0);
+
+
 //	slScrPosNbg0(toFIXED(0) , toFIXED(0));
 //    slInitBitMap(bmNBG0, BM_512x256, (void *)NBG0_CEL_ADR);
 //    slBMPaletteNbg0(1);
     // screen coordinates like in SDL
     slBitMapBase(0, 0);
-    slScrAutoDisp(NBG0OFF | NBG1ON);
+    slScrAutoDisp(NBG0ON | NBG1ON);
 
 	screen->pixels = (unsigned char*)malloc(sizeof(unsigned char)*width*height);
 /*	screen->pixels = (Uint8 *)(0x00202000); */
@@ -189,6 +195,17 @@ static const Sint8	logtbl[] = {
 	screen->flags = (SDL_HWSURFACE|SDL_ASYNCBLIT|SDL_RLEACCEL);
 	//slTVOn();
 //	memset((void *)NBG1_CEL_ADR,0x2222,0x20000);
+
+/*	screen0->pixels = (unsigned char*)malloc(sizeof(unsigned char)*width*height); */
+
+	screen0 = (SDL_Surface*)malloc(sizeof(SDL_Surface));
+	CHECKMALLOCRESULT(screen0);
+
+	screen0->pixels = (Uint8 *)(0x00202000); 
+	screen0->format->BytesPerPixel = 1;
+	screen0->pitch = width;
+	screen0->flags = (SDL_HWSURFACE|SDL_ASYNCBLIT|SDL_RLEACCEL);
+
 	return screen;
 }
 //--------------------------------------------------------------------------------------------------------------------------------------
@@ -258,10 +275,12 @@ unsigned char *drv;
 	return 0;
 }
 //--------------------------------------------------------------------------------------------------------------------------------------
+/*
 Uint8 SDL_EventState(Uint8 type, int state)
 {
 	return 0;
 }
+*/
 //--------------------------------------------------------------------------------------------------------------------------------------
 /*
 void SDL_WarpMouse(Uint16 x, Uint16 y)
@@ -335,7 +354,8 @@ Uint8 SDL_GetMouseState(int *x, int *y)
 //--------------------------------------------------------------------------------------------------------------------------------------
 Uint32 SDL_MapRGB (SDL_PixelFormat *format, Uint8 r, Uint8 g, Uint8 b)
 {
-	
+//	slBMPset(Sint16 , Sint16 , Sint8) ;
+// retourner l'index de la couleur
 	return 0;
 }
 //--------------------------------------------------------------------------------------------------------------------------------------
@@ -353,39 +373,18 @@ int SDL_LockSurface(SDL_Surface *surface)
 //--------------------------------------------------------------------------------------------------------------------------------------
 void SDL_UnlockSurface(SDL_Surface *surface)
 {
-// si on n'utilise pas de dma decommenter
-//	slBMPut(0, 0, screenWidth-1, screenHeight-1, (Sint8*)surface->pixels); // vbt : 16-18fps
-//memcpywh((char *)NBG1_CEL_ADR, (char *)surface->pixels, 320, 240, 512 - 320);//, 1, 0, 0); // vbt : 16-18fps
- // vbt : boucle lent 16-18fps
-/*	unsigned int i,j;
-	unsigned char *src = (unsigned char *)surface->pixels;
-	unsigned char *dst = (unsigned char *)NBG1_CEL_ADR;
-	unsigned int width = surface->w;
-	unsigned int height = surface->h;
-
-	for (i = 0;i < height ;i++ ) 
-	{
-		for (j = 0;j < width ;j++ ) 
-		{
-			*dst++ = *src;
-			src +=1;
-		}
-		dst += (512-width);
-	}
-
-	loadedSurface->left=left;
-	loadedSurface->bottom=bottom;
-*/
-//memcpy((unsigned char *)(0x00200000),surface->pixels,screenHeight*screenWidth);
-
 	unsigned int i; // vbt : le plus rapide
-	for (i = 0; i < screenHeight; i++) 
-	{
-//		DMA_ScuMemCopy((unsigned char*)(NBG1_CEL_ADR + (i<<9)), (unsigned char*)(surface->pixels + (i * screenWidth)), screenWidth); // vbt 20-22fps
-//		SCU_DMAWait();
-//		memcpyl((unsigned long*)(NBG1_CEL_ADR + (i<<9)), (unsigned long*)(surface->pixels + (i * screenWidth)), screenWidth); // vbt : 22-24fps
-		slDMACopy((unsigned long*)(surface->pixels + (i * screenWidth)),(void *)(NBG1_CEL_ADR + (i<<9)),screenWidth);
-	}
+	if(surface==screen)
+		for (i = 0; i < screenHeight; i++) 
+		{
+			slDMACopy((unsigned long*)(surface->pixels + (i * screenWidth)),(void *)(NBG1_CEL_ADR + (i<<9)),screenWidth);
+		}
+	else
+		for (i = 0; i < screenHeight; i++) 
+		{
+			slDMACopy((unsigned long*)(surface->pixels + (i * screenWidth)),(void *)(NBG0_CEL_ADR + (i<<9)),screenWidth);
+		}
+
 }
 //--------------------------------------------------------------------------------------------------------------------------------------
 int SDL_OpenAudio(SDL_AudioSpec *desired, SDL_AudioSpec *obtained)
@@ -530,7 +529,6 @@ int SDL_UpperBlit (SDL_Surface *src, SDL_Rect *srcrect, SDL_Surface *dst, SDL_Re
 {
 	//slBMPut((dest) == NULL ? 0 : ((SDL_Rect *)dest)->x, (dest) == NULL ? 0 : ((SDL_Rect *)dest)->y, ((dest) == NULL ? 0 : ((SDL_Rect *)dest)->x) + images[img].w - 1, ((dest) == NULL ? 0 : ((SDL_Rect *)dest)->y) + images[img].h - 1, images[img].data);
  //slPrint("SDL_UpperBlit start       ",slLocate(3,22)); 
- 
 	if((srcrect)!=NULL)
 	{
 		for( Sint16 i=0;i<srcrect->h;i++)
@@ -608,7 +606,7 @@ if((dst)!=NULL)
 /*
   slBMBoxFill((dest)->x, (dest)->y, (dest)->x + (dest)->w - 1, (dest)->y + (dest)->h - 1, 0)
 */
-char *lwr = (Uint8 *)((0x00202000)); //+320*200);
+char *lwr = (Uint8 *)((0x00202000)+320*200);
 //--------------------------------------------------------------------------------------------------------------------------------------
 SDL_Surface * SDL_CreateRGBSurface(Uint32 flags, int width, int height, int depth, Uint32 Rmask, Uint32 Gmask, Uint32 Bmask, Uint32 Amask)
 {
@@ -721,7 +719,7 @@ int ctrlPadStatusCurrent = 0;
 int ctrlPadStatusOld = 0;
 int ctrlPadStatusNew = 0;
 int ctrlPadStatusDelta = 0;
-
+#if 1
 int SDL_PollEvent(SDL_Event *event)
 {
 	Uint16 push = 0, data = 0;
@@ -954,6 +952,7 @@ int SDL_PollEvent(SDL_Event *event)
 #endif
 
 //--------------------------------------------------------------------------------------------------------------------------------------
+
 int SDL_WaitEvent(SDL_Event *event)
 {
 	event->type = SDL_NOEVENT;
@@ -1099,7 +1098,7 @@ slPrint("data & PER_DGT_ST SDL_KEYUP                                  ",slLocate
 			return 1;
 		}
 
-#if 0
+#if 1
 		if(data & PER_DGT_TA) {
 			event->type = SDL_KEYDOWN;
 			event->key.keysym.sym = SDLK_KP_ENTER;
@@ -1202,6 +1201,31 @@ int SDL_PushEvent(SDL_Event *event)
 {
 	globalevent.type=event->type;
 	return 0;
+}
+#endif
+//--------------------------------------------------------------------------------------------------------------------------------------
+void SDL_CheckKeyRepeat(void)
+{
+	if ( SDL_KeyRepeat.timestamp ) {
+		Uint32 now, interval;
+
+		now = SDL_GetTicks();
+		interval = (now - SDL_KeyRepeat.timestamp);
+		if ( SDL_KeyRepeat.firsttime ) {
+			if ( interval > (Uint32)SDL_KeyRepeat.delay ) {
+				SDL_KeyRepeat.timestamp = now;
+				SDL_KeyRepeat.firsttime = 0;
+			}
+		} else {
+			if ( interval > (Uint32)SDL_KeyRepeat.interval ) {
+				SDL_KeyRepeat.timestamp = now;
+//				if ( (SDL_EventOK == NULL) || SDL_EventOK(&SDL_KeyRepeat.evt) ) 
+				{
+					SDL_PushEvent(&SDL_KeyRepeat.evt);
+				}
+			}
+		}
+	}
 }
 //--------------------------------------------------------------------------------------------------------------------------------------
 void SDL_DestroyMutex(SDL_mutex *mutex)

@@ -126,7 +126,7 @@ slPrint("resource coudn't be loaded.                                     ",slLoc
 				imgsActive++;
 			}
 
-#if 0
+#if 1
 			for (i=0;i<objCount;i++) { /*objects*/
 				objArray[objsActive].obj=objectCreate(obj[i].location,obj[i].floor,DIR_LEFT,obj[i].state,obj[i].res,obj[i].cacheMirror,oGeneric);
 				objArray[objsActive].active=1;
@@ -146,7 +146,7 @@ slPrint("resource coudn't be loaded.                                     ",slLoc
 				if (imgArray[i].layer==ANIMS_LAYERTYPE_BOTTOM)
 				{
 /*					slPrint("ANIMS_LAYERTYPE_BOTTOM                                     ",slLocate(2,10));*/
-					outputDrawBitmap(imgArray[i].img->pFrames[0], imgArray[i].x, imgArray[i].y);
+					outputDrawBitmap(imgArray[i].layer,imgArray[i].img->pFrames[0], imgArray[i].x, imgArray[i].y); 
 				}
 			}
 #if 1			
@@ -175,7 +175,7 @@ slPrint("resource coudn't be loaded.                                     ",slLoc
 			for (i=0;i<imgsActive;i++) {
 				if (imgArray[i].layer==ANIMS_LAYERTYPE_TOP) {
 /*					slPrint("ANIMS_LAYERTYPE_TOP                                     ",slLocate(2,10));*/
-					outputDrawBitmap(imgArray[i].img->pFrames[0], imgArray[i].x, imgArray[i].y);
+					outputDrawBitmap(imgArray[i].layer,imgArray[i].img->pFrames[0], imgArray[i].x, imgArray[i].y); 
 				}
 			}
 #endif

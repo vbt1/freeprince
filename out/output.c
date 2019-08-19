@@ -78,6 +78,8 @@ typedef struct {
 
 /* Main screen object */
 SDL_Surface* screen; /* Only files in this layer must import this struct */
+SDL_Surface* screen0;
+char *lw = (Uint8 *)(0x00202000);
 
 /* Text functions */
 
@@ -387,7 +389,7 @@ slPrint(toto,slLocate(2,11));
 	
 	if (SDL_MUSTLOCK(loadedSurface->surface)) {
 		slPrint("SDL_UnlockSurface(loadedSurface->surface)                     ",slLocate(2,22));
-		SDL_UnlockSurface(loadedSurface->surface);
+/*		SDL_UnlockSurface(loadedSurface->surface); */
 	}
 /*	free(colors);*/
 	return (void*)loadedSurface;
@@ -402,7 +404,7 @@ void outputFreeBitmap(void* image) {
 }
 
 /* Graphics: Primitives for the kernel */
-void outputDrawBitmap(void* image, int x, int y) {
+void outputDrawBitmap(unsigned char layer, void* image, int x, int y) {
 char toto[50];
 
 	/* Draws an abstract image */
@@ -439,15 +441,31 @@ slPrint(toto,slLocate(10,16));
 sprintf(toto,"s %x d %x "            ,s,screen);
 slPrint(toto,slLocate(10,17));	
 
-	if (SDL_MUSTLOCK(screen)) 
-		SDL_LockSurface(screen);
-
-	SDL_BlitSurface(s, NULL, screen, &dest);
-	if (SDL_MUSTLOCK(screen))
+	if(layer==ANIMS_LAYERTYPE_BOTTOM)
 	{
-		slPrint("SDL_UnlockSurface(screen)                     ",slLocate(2,22));
-		SDL_UnlockSurface(screen);
-/*		while(1);*/
+		if (SDL_MUSTLOCK(screen)) 
+			SDL_LockSurface(screen);
+
+		SDL_BlitSurface(s, NULL, screen, &dest);
+		if (SDL_MUSTLOCK(screen))
+		{
+			slPrint("SDL_UnlockSurface(screen)                     ",slLocate(2,22));
+			SDL_UnlockSurface(screen);
+	/*		while(1);*/
+		}
+	}
+	else
+	{
+		if (SDL_MUSTLOCK(screen0)) 
+			SDL_LockSurface(screen0);
+
+		SDL_BlitSurface(s, NULL, screen0, &dest);
+		if (SDL_MUSTLOCK(screen0))
+		{
+			slPrint("SDL_UnlockSurface(screen0)                     ",slLocate(2,22));
+			SDL_UnlockSurface(screen0);
+	/*		while(1);*/
+		}
 	}
 }
 

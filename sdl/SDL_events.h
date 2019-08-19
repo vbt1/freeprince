@@ -29,14 +29,14 @@ static char rcsid =
 
 #ifndef _SDL_events_h
 #define _SDL_events_h
-
+/*
 #include "SDL_types.h"
 #include "SDL_active.h"
 #include "SDL_keyboard.h"
 #include "SDL_mouse.h"
 #include "SDL_joystick.h"
 #include "SDL_quit.h"
-
+*/
 #include "begin_code.h"
 /* Set up for C function definitions, even when using C++ */
 #ifdef __cplusplus
@@ -111,7 +111,7 @@ typedef struct {
 	Uint8 gain;	/* Whether given states were gained or lost (1/0) */
 	Uint8 state;	/* A mask of the focus states */
 } SDL_ActiveEvent;
-
+#if 0
 /* Keyboard event structure */
 typedef struct {
 	Uint8 type;	/* SDL_KEYDOWN or SDL_KEYUP */
@@ -196,7 +196,7 @@ typedef struct {
 typedef struct {
 	Uint8 type;	/* SDL_QUIT */
 } SDL_QuitEvent;
-
+#endif
 /* A user-defined event type */
 typedef struct {
 	Uint8 type;	/* SDL_USEREVENT through SDL_NUMEVENTS-1 */
@@ -206,8 +206,10 @@ typedef struct {
 } SDL_UserEvent;
 
 /* If you want to use this event, you should include SDL_syswm.h */
-struct SDL_SysWMmsg;
-typedef struct SDL_SysWMmsg SDL_SysWMmsg;
+typedef struct  {
+	unsigned int msg;			/* The type of message */
+}SDL_SysWMmsg;
+
 typedef struct {
 	Uint8 type;
 	SDL_SysWMmsg *msg;
@@ -249,6 +251,11 @@ typedef struct {
 		void *data1;	/* User defined data pointer */
 		void *data2;	/* User defined data pointer */
 	} user;
+
+	struct {
+		Uint8 type;
+		SDL_SysWMmsg *msg;
+	} syswm;
 } SDL_Event;
 
 
@@ -291,7 +298,7 @@ extern DECLSPEC int SDLCALL SDL_PollEvent(SDL_Event *event);
    was an error while waiting for events.  If 'event' is not NULL, the next
    event is removed from the queue and stored in that area.
  */
-extern DECLSPEC int SDLCALL SDL_WaitEvent(SDL_Event *event);
+extern int SDL_WaitEvent(SDL_Event *event);
 
 /* Add an event to the event queue.
    This function returns 0 if the event queue was full, or -1
