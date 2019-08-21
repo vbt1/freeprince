@@ -3,10 +3,10 @@
 
 #define ANIMS_IMAGE {\
 	{/*frame*/ 0,/*res*/ (unsigned long)(RES_IMG_MAIN_BACKGROUND), /*duration*/ 30, /*layer*/ (unsigned char)ANIMS_LAYERTYPE_BOTTOM, /*x,y*/ (unsigned short)0,(unsigned short)200},\
-	{/*frame*/ 2,/*res*/ (unsigned long)(RES_IMG_MAIN_PRESENTS), /*duration*/ 6, /*layer*/ (unsigned char)ANIMS_LAYERTYPE_BOTTOM, /*x,y*/ (unsigned short)96,(unsigned short)153},\
-	{/*frame*/ 10,/*res*/ (unsigned long)(RES_IMG_MAIN_AUTHOR), /*duration*/ 4, /*layer*/ (unsigned char)ANIMS_LAYERTYPE_BOTTOM, /*x,y*/ (unsigned short)50,(unsigned short)190},\
-	{/*frame*/ 15,/*res*/ (unsigned long)(RES_IMG_MAIN_GAME_NAME), /*duration*/ 8, /*layer*/ (unsigned char)ANIMS_LAYERTYPE_BOTTOM, /*x,y*/ (unsigned short)40,(unsigned short)100},\
-	{/*frame*/ 24,/*res*/ (unsigned long)(RES_IMG_MAIN_COPYRIGHT), /*duration*/ 6, /*layer*/ (unsigned char)ANIMS_LAYERTYPE_BOTTOM, /*x,y*/ (unsigned short)50,(unsigned short)190},\
+	{/*frame*/ 2,/*res*/ (unsigned long)(RES_IMG_MAIN_PRESENTS), /*duration*/ 6, /*layer*/ (unsigned char)ANIMS_LAYERTYPE_TOP, /*x,y*/ (unsigned short)96,(unsigned short)153},\
+	{/*frame*/ 10,/*res*/ (unsigned long)(RES_IMG_MAIN_AUTHOR), /*duration*/ 4, /*layer*/ (unsigned char)ANIMS_LAYERTYPE_TOP, /*x,y*/ (unsigned short)96,(unsigned short)153},\
+	{/*frame*/ 15,/*res*/ (unsigned long)(RES_IMG_MAIN_GAME_NAME), /*duration*/ 8, /*layer*/ (unsigned char)ANIMS_LAYERTYPE_TOP, /*x,y*/ (unsigned short)24,(unsigned short)172},\
+	{/*frame*/ 24,/*res*/ (unsigned long)(RES_IMG_MAIN_COPYRIGHT), /*duration*/ 6, /*layer*/ (unsigned char)ANIMS_LAYERTYPE_TOP, /*x,y*/ (unsigned short)50,(unsigned short)190},\
 	{/*frame*/ 30,/*res*/ (unsigned long)(RES_IMG_TEXT_BACKGROUND), /*duration*/ 10, /*layer*/ (unsigned char)ANIMS_LAYERTYPE_BOTTOM, /*x,y*/ (unsigned short)0,(unsigned short)200},\
 	{/*frame*/ 30,/*res*/ (unsigned long)(RES_IMG_TEXT_IN_THE_ABSENSE|RES_MODS_BW), /*duration*/ 10, /*layer*/ (unsigned char)ANIMS_LAYERTYPE_TOP, /*x,y*/ (unsigned short)20,(unsigned short)170},\
 	{/*frame*/ 40,/*res*/ (unsigned long)(RES_IMG_PRINCESS_ROOM), /*duration*/ 30, /*layer*/ (unsigned char)ANIMS_LAYERTYPE_BOTTOM, /*x,y*/ (unsigned short)0,(unsigned short)200},\
