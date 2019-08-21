@@ -330,6 +330,8 @@ tRoom mapGetRoom(tMap* map, tRoomId roomAux) {
 }
 
 void  mapStart(tMap* map, tObject* kid, tRoomId *roomId, int level) {
+char toto[50];
+
 	/* kid->x,y */
 	/*static char environments[]=MAP_ENVIRONMENTS;*/
 	*roomId=slevel(start)[0];
@@ -337,6 +339,9 @@ void  mapStart(tMap* map, tObject* kid, tRoomId *roomId, int level) {
 	printf("mapStart: binding kid to map in room %d using the %d environment\n",*roomId,environments[level]);
 #endif
 	slevel(time)=0;
+sprintf(toto,"roomLoadGfx %d    ",RES_IMG_ENV_DUNGEON);
+slPrint(toto,slLocate(2,9));
+
 	roomLoadGfx(/*environments[level]?RES_IMG_ENV_PALACE:*/RES_IMG_ENV_DUNGEON);
 }
 

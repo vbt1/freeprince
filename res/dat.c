@@ -69,10 +69,7 @@ int mReadBeginDatFile(unsigned short int *numberOfItems,const char* vFiledat){
 	/* Open file */
 
 char toto[50];
-	/*
-sprintf(toto,"mLoadFileArray      ");
-slPrint(toto,slLocate(2,18));
-*/
+
 	readDatFileSize=mLoadFileArray(vFiledat,&readDatFile);
 
 	if (!readDatFileSize) 
@@ -92,22 +89,16 @@ slPrint(toto,slLocate(2,22));
 	}
 
 	readDatFilePoint=readDatFile;
-		/*
-sprintf(toto,"array2long          ");
-slPrint(toto,slLocate(2,18));
-*/
+
 	/* verify dat format */
 	indexOffset=array2long(readDatFilePoint);
 	readDatFilePoint+=4;
-	/*
-sprintf(toto,"array2short          ");
-slPrint(toto,slLocate(2,18));
-*/
+
 	indexSize=array2short(readDatFilePoint);
 
 	if ((indexOffset>readDatFileSize)&&((indexOffset+indexSize)!=readDatFileSize)) {
-	/*
-sprintf(toto,"mReadBeginDatFile: %s",vFiledat);
+	
+sprintf(toto,"mReadBeginDatFileX: %s",vFiledat);
 slPrint(toto,slLocate(2,19));
 
 sprintf(toto,"idx %d fsz %d",indexOffset,readDatFileSize);
@@ -117,16 +108,17 @@ slPrint(toto,slLocate(2,21));
 
 sprintf(toto,"mReadBeginDatFile: Invalid format");
 slPrint(toto,slLocate(2,22));
-*/
+
 		slPrint("mReadBeginDatFile: Invalid format",slLocate(2,22));
 /*		fprintf(stderr, "mReadBeginDatFile: Invalid format\n");*/
 		free(readDatFile);
 		return 0; /* this is not a valid prince dat file */
 	}
 
-	indexPointer=readDatFile+indexOffset;
+	indexPointer=(unsigned char *)readDatFile+indexOffset;
 	*numberOfItems=array2short(indexPointer);
 	indexPointer+=2;
+
 	pop1=(((*numberOfItems)*8+2)==indexSize);
 
 	if (!pop1) { /* verify if pop2 */
@@ -135,6 +127,7 @@ slPrint(toto,slLocate(2,22));
 	} else {
 		ofk=0;
 	}
+
 	recordSize=pop1?8:11;
 
 	return 1;
@@ -143,15 +136,29 @@ slPrint(toto,slLocate(2,22));
 int mReadFileInDatFile(int k,unsigned char* *data,unsigned long  int *size) {
 	int ok=1; 
 	unsigned short int id;
-
+char toto[50];
 	/* for each archived file the index is read */
 	id=array2short(indexPointer+ofk+k*recordSize);
 	
 	offset=array2long(indexPointer+ofk+k*recordSize+2);
 	*size= array2short(indexPointer+ofk+k*recordSize+6);
-	if ((!pop1)&&(!(indexPointer[ofk+k*recordSize+8]==0x40)&&(!indexPointer[ofk+k*recordSize+9])&&(!indexPointer[ofk+k*recordSize+10]))) return -1;
-	if (offset+indexSize>readDatFileSize) return -1;
+	if ((!pop1)&&(!(indexPointer[ofk+k*recordSize+8]==0x40)&&(!indexPointer[ofk+k*recordSize+9])&&(!indexPointer[ofk+k*recordSize+10])))
+	{
+sprintf(toto,"error1 pop %d ixp1 %x ixp2 %d ixp3 %d  ",pop1,indexPointer[ofk+k*recordSize+8],indexPointer[ofk+k*recordSize+9]);
+slPrint(toto,slLocate(2,9));
+		return -1;
+	}
+	if (offset+indexSize>readDatFileSize) 
+	{
+sprintf(toto,"error2 offs+idxs %d fs %d  ",offset+indexSize,readDatFileSize);
+slPrint(toto,slLocate(2,9));
+		return -1;
+	}
 	*data=readDatFile+offset;
+
+sprintf(toto,"error3 ok %d id %d  ",ok,id);
+slPrint(toto,slLocate(2,9));
+
 	return ok?id:-1;
 }
 

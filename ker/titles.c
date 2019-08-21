@@ -62,7 +62,6 @@ tMenuOption getAction(tKey key) {
 	case quit:
 		return menuQuit;
 	case load:
-slPrint("menuLoad(key)                                     ",slLocate(2,20));
 		return menuLoad;
 	default:
 		return menuStart;

@@ -32,14 +32,14 @@ main.c: FreePrince : Main function - parsing
 
 #include <SDL/SDL.h> /* Mac OS X entry point redefinition */
 #include <unistd.h>
-
+/*
 #ifdef ENABLE_GETOPT
 #include "getopt.h"
 #else
 #define _GNU_SOURCE
 #include <getopt.h>
 #endif
-
+*/
 #include "kernel.h"
 #include "main.h"
 #include <stdio.h>
@@ -51,12 +51,13 @@ main.c: FreePrince : Main function - parsing
 
 int main (int argc, char **argv) {
 	/* declare variables */
+#if 0
 	int c;
 	int optionflag=0;
 	int junk = 0;
 
 	int level=-1;
-#if 0
+
 	/* Parse command line options */
 	do {
 		static struct option long_options[] = PARSING_OPTIONS;
@@ -102,5 +103,11 @@ int main (int argc, char **argv) {
 	}
 #endif
 	/* Start kernel program */
+/* vbt : ajout */
+	int optionflag=0;
+	int level=-1;
+
+	setFlag(menu_flag);
+
 	return kernel(optionflag,level);
 }

@@ -56,7 +56,7 @@ key->status=2;
 
 	/* Control actions */
 	if (inputGetCtrl(key->status)) {
-	slPrint("inputGetCtrl(yes)                                     ",slLocate(2,4));
+/*	slPrint("inputGetCtrl(yes)                                     ",slLocate(2,4)); */
 		switch (k) {
 		case SDLK_g:
 			key->actionPerformed=save;
@@ -88,7 +88,7 @@ key->status=2;
 	}
 	else
 	{
-	slPrint("inputGetCtrl(no)                                     ",slLocate(2,4));
+/*	slPrint("inputGetCtrl(no)                                     ",slLocate(2,4));*/
 	}
 
 	/* Shift actions */
@@ -165,6 +165,9 @@ key->status=2;
 			break;
 		}
 	}
+if(k==108) /* vbt : petit hack en attendant mieux */
+key->status=0;
+
 	return key->actionPerformed;
 }
 
@@ -231,12 +234,16 @@ char toto[50];
 		key->actionPerformed=none;
 		switch (event.type) {
 		case SDL_KEYDOWN:
+slPrint("SDL_KEYDOWN    ",slLocate(2,11));
+
 			editKey(key,event.key.keysym.sym,1);
 
 			if (editAction(key,event.key.keysym.sym)) return 0;
 			break;
 		case SDL_KEYUP:
-			editKey(key,event.key.keysym.sym,0);
+slPrint("SDL_KEYUP     ",slLocate(2,11));
+
+		editKey(key,event.key.keysym.sym,0);
 			break;
 #ifdef DEBUG_POS
 		case SDL_MOUSEBUTTONDOWN:
@@ -247,6 +254,7 @@ char toto[50];
 			break;
 #endif
 		case SDL_USEREVENT:
+slPrint("SDL_USEREVENT     ",slLocate(2,11));
 			return 1; /* A new time cicle has started! */
 		case SDL_QUIT:
 			key->actionPerformed=quit;

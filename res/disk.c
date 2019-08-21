@@ -403,7 +403,7 @@ int writeData(const unsigned char* data, int ignoreChars, char* vFileext, int si
 	return ok;
 }
 #endif
-int vbt = 0;
+/*int vbt = 0; */
 #define TVSTAT      (*(volatile unsigned short *)0x25F80004)
 
 void wait_vblank(void)
@@ -418,15 +418,15 @@ int mLoadFileArray(const char* vFile,unsigned char** array) {
 		number of bytes	in it and the content of the file in array.
 		In case the file couldn't be open or memory allocated returns 0.
 	*/
-vbt++;
+/*vbt++; */
 	/* declare variables */
 	int  aux,i;
 	int fileId =  GFS_NameToId((signed char*)strupr(vFile)); 
 
-/*char toto[40];
-sprintf(toto,"%d %s %d       ",vbt,vFile,fileId);
+char toto[40];
+sprintf(toto,"%s %d       ",vFile,fileId);
 slPrint(toto,slLocate(2,1));
-*/
+
 
 
 /*	heapWalk();*/
@@ -434,11 +434,11 @@ slPrint(toto,slLocate(2,1));
 
 	long fileSize = GetFileSize(fileId);
 	aux = fileSize;
-/*
-char toto[40];
+
+
 sprintf(toto,"fs:%ld %s %d     ",fileSize,vFile,fileId);
-slPrint(toto,slLocate(2,19));
-*/
+slPrint(toto,slLocate(2,2));
+
 #if 1
 	if ( !aux || (aux>SIZE_OF_FILE) || ( ((*array=(unsigned char*)malloc(aux+1))==NULL) ) ) {
 slPrint("file was null or bigger than max size or can't allocate memory ",slLocate(2,22));
@@ -446,10 +446,10 @@ slPrint("file was null or bigger than max size or can't allocate memory ",slLoca
 		return 0;
 	}
 #endif
-	GFS_Load(fileId, 0, *array, aux);
+	GFS_Load(fileId, 0, *array, fileSize);
 	wait_vblank();
-	(*array)[aux]=0;
-	return aux;
+	(*array)[fileSize]=0;
+	return fileSize;
 }
 #if 0
 const char* getFileNameFromPath(const char* path) {

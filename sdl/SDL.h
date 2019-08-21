@@ -63,7 +63,7 @@
  
 #ifndef ACTION_REPLAY
 #define MAX_OPEN        16 //a ne pas modifier
-#define MAX_DIR         64//384
+#define MAX_DIR         32//384
 #else
 #define MAX_OPEN        2
 #define MAX_DIR         1

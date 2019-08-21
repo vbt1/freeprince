@@ -50,7 +50,7 @@ void kidDrawLives(tObject *kid) {
 		register int res=((i<kid->hitPoints)&&!((kid->hitPoints==1)&&(blink)))?
 			KID_LIVE_FILL:KID_LIVE_EMPTY;
 		
-		outputDrawBitmap(kid->gfxCache[1]->pFrames[res],2+8*i,11+3*TILE_H);
+		outputDrawBitmap(NULL,kid->gfxCache[1]->pFrames[res],2+8*i,11+3*TILE_H);
 
 	}
 }

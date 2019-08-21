@@ -61,10 +61,18 @@ int playgame(int optionflag,int level) {
 	int notReset;
 	int flags;
 	int timeDead;
-	
+
+char toto[50];
+sprintf(toto,"playgme %d %d",optionflag,level);
+slPrint(toto,slLocate(2,8));
+
+
 	while (1) {	
 		/* Initialize */
 		key=inputCreateKey();
+sprintf(toto,"resLoad %d ",RES_MAP|level);
+slPrint(toto,slLocate(2,8));
+
 		resMap=resLoad(RES_MAP|level);
 		map=(tMap*)resMap->pFrames;
 		notReset=1;
@@ -78,12 +86,14 @@ int playgame(int optionflag,int level) {
 		/* Game loop here */
 		
 		/* Initialize kid and room in the map */
+
 		mapStart(map,&kid,&roomId,level);
+
 		room=mapGetRoom(map,roomId);
-		
 		/* Level loop here */
 		while (notReset) {
 			if (inputGetEvent(&key)) {
+
 				/* Time event */
 	
 				/* Moving objects */
@@ -91,13 +101,24 @@ int playgame(int optionflag,int level) {
 				 * TODO: send to the real place where
 				 * the key is interpreted in kid object
 				 */
+
 				flags=objectMove(&kid,key,&room);
-				if (mapMove(map)) room=mapGetRoom(map,room.id);
+
+				if (mapMove(map))
+				{
+
+					room=mapGetRoom(map,room.id);
+				}
 				/* Drawing functions */
-				outputClearScreen(); /* TODO: send to drawBackground() */
+
+/*				outputClearScreen();*/ /* TODO: send to drawBackground() */
+
 				roomDrawBackground(&room);
+
 				kidDrawLives(&kid);
+
 				objectDraw(&kid);
+
 				roomDrawForeground(&room);
 				/* if dead */
 				if (flags&STATES_FLAG_X) {
@@ -113,6 +134,9 @@ int playgame(int optionflag,int level) {
 					resFree(resMap);
 					return 0;
 				}
+sprintf(toto,"outputUpdateScreen    ");
+slPrint(toto,slLocate(2,9));
+
 				outputUpdateScreen();
 			} else {
 				/* Action event */
@@ -226,7 +250,7 @@ while(1);
 
 			switch (menuOption) {
 				case menuLoad:
-					level=8; /* TODO: make read level function */
+					level=1; /*8;*/ /* TODO: make read level function */
 					break;
 				case menuStart:
 					level=1;

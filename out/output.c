@@ -340,7 +340,7 @@ void* outputLoadBitmap(const unsigned char* data, int size,
 		}
 	}
 
-char toto[50];
+/* char toto[50]; */
 /*
  sprintf(toto,"w%d h %d                ",loadedSurface->surface->w,loadedSurface->surface->h); 
 slPrint(toto,slLocate(2,10));
@@ -388,7 +388,7 @@ slPrint(toto,slLocate(2,11));
 	}
 	
 	if (SDL_MUSTLOCK(loadedSurface->surface)) {
-		slPrint("SDL_UnlockSurface(loadedSurface->surface)                     ",slLocate(2,22));
+/*		slPrint("SDL_UnlockSurface(loadedSurface->surface)                     ",slLocate(2,22)); */
 /*		SDL_UnlockSurface(loadedSurface->surface); */
 	}
 /*	free(colors);*/

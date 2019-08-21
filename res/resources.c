@@ -153,6 +153,7 @@ tData* resLoad(long id) {
 	
 	switch (type) {
 		case RES_TYPE_LVL:
+				slPrint("RES_TYPE_LVL                                    ",slLocate(2,19));
 
 			if (total!=2) {
 				slPrint("Fatal Error: resLoad: invalid level define!                                     ",slLocate(2,21));
@@ -161,21 +162,29 @@ tData* resLoad(long id) {
 			}
 
 			mask+=res_list[from+1];
+				slPrint("mReadBeginDatFile                                    ",slLocate(2,20));
 
 			if (!mReadBeginDatFile(&numberOfItems,res_file[res_list[from]])) {
-				slPrint("Fatal Error: resLoad: level file not found!                                     ",slLocate(2,21));
+slPrint("Fatal Error: resLoad: level file not found!                                     ",slLocate(2,21));
 /*				fprintf(stderr,"Fatal Error: resLoad: level file not found!\n");*/
 				return NULL;
 			}
+				slPrint("res_getDataById                                    ",slLocate(2,20));
+
 			if(!res_getDataById(mask,numberOfItems,&raw)) {
-				slPrint("Fatal Error: resLoad: level not found!                                     ",slLocate(2,21));
+char toto[50];
+sprintf(toto,"m %d n %d t %d   ",mask,numberOfItems,total);
+slPrint("Fatal Error: resLoad: level not found!                                     ",slLocate(2,21));
+slPrint(toto,slLocate(2,22));
 /*				fprintf(stderr,"Fatal Error: resLoad: level not found!\n");*/
 				return NULL;
 			}
 			result=(tData*)malloc(sizeof(tData));
 			result->frames=1; /* drop filename and palette */
 			result->type=eLevels;
+slPrint("mapLoadLevel                                    ",slLocate(2,20));
 			result->pFrames=(void**)mapLoadLevel(raw);
+slPrint("mReadCloseDatFile                                    ",slLocate(2,20));
 			mReadCloseDatFile();
 			return result; /* transform from raw to a loaded map */
 		case RES_TYPE_IMG: {

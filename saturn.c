@@ -47,8 +47,6 @@ int CdUnlock();
 //}
 void SCU_DMAWait(void);
 
-//extern void CheckWeaponChange (void);
-//extern void ShapeTest (void);
 //#define ACTION_REPLAY 1
 #ifndef ACTION_REPLAY
 //Sint32 file_max;
@@ -66,17 +64,12 @@ void ChangeDir(char *dirname);
 int SDL_InitSubSystem(Uint32 flags);
 
  //#include <sddrvs.dat>
-//extern Uint8 control_status ;
-//extern volatile ScanCode	LastScan;
 Sint32 GetFileSize(int file_id);
 /*
  debug
 */
-//Uint32 frame = 0;
-//extern Image images[];
 static unsigned char vbt_event[13][2];
 static int current_event=0;
-//int nb_event=0;
 static Uint32 count=0;
 Uint16 previouscount=0;
 Uint16 multip=0;
@@ -84,8 +77,6 @@ PCM m_dat[4];
 
 static	CdcPly	playdata;
 static	CdcPos	posdata;
-
-//Uint8 *lowram=(Uint8 *)0x00202000;
 
 static Uint16 pad_asign[] = {
 	PER_DGT_KU,
@@ -129,9 +120,6 @@ static const Sint8	logtbl[] = {
 /*
  dummy
  */
-//SDL_Screen scr;
-//SDL_Screen *screen = &scr;
-// char *lw = (Uint8 *)(0x00202000);
 //--------------------------------------------------------------------------------------------------------------------------------------
  SDL_Surface * SDL_SetVideoMode  (int width, int height, int bpp, Uint32 flags)
 {
@@ -179,13 +167,13 @@ static const Sint8	logtbl[] = {
     slInitBitMap(bmNBG0, BM_512x256, (void *)NBG0_CEL_ADR);
     slBMPaletteNbg0(0);
 
+	slPriorityNbg3(7);
+    slCharNbg3(COL_TYPE_256, CHAR_SIZE_1x1);
+    slPageNbg3((void*)0x25e60000, 0, PNB_1WORD|CN_10BIT );
+    slPlaneNbg3(PL_SIZE_1x1);
+    slMapNbg3((void*)0x25e76000, (void*)0x25e76000, (void*)0x25e76000, (void*)0x25e76000);
 
-//	slScrPosNbg0(toFIXED(0) , toFIXED(0));
-//    slInitBitMap(bmNBG0, BM_512x256, (void *)NBG0_CEL_ADR);
-//    slBMPaletteNbg0(1);
-    // screen coordinates like in SDL
-    slBitMapBase(0, 0);
-    slScrAutoDisp(NBG0ON | NBG1ON);
+    slScrAutoDisp(NBG0ON | NBG1ON | NBG3OFF);
 
 	screen->pixels = (unsigned char*)malloc(sizeof(unsigned char)*width*height);
 /*	screen->pixels = (Uint8 *)(0x00202000); */
@@ -197,7 +185,6 @@ static const Sint8	logtbl[] = {
 //	memset((void *)NBG1_CEL_ADR,0x2222,0x20000);
 
 /*	screen0->pixels = (unsigned char*)malloc(sizeof(unsigned char)*width*height); */
-
 	screen0 = (SDL_Surface*)malloc(sizeof(SDL_Surface));
 	CHECKMALLOCRESULT(screen0);
 
@@ -220,7 +207,6 @@ int SDL_SetColors(SDL_Surface *surface, 	SDL_Color *colors, int firstcolor, int 
 	}
 	Pal2CRAM(palo , (void *)NBG1_COL_ADR , ncolors);
 	return 1;
-	//return 0;
 }
 //--------------------------------------------------------------------------------------------------------------------------------------
 int SDL_SetColorKey	(SDL_Surface *surface, Uint32 flag, Uint32 key)
@@ -361,8 +347,15 @@ Uint32 SDL_MapRGB (SDL_PixelFormat *format, Uint8 r, Uint8 g, Uint8 b)
 //--------------------------------------------------------------------------------------------------------------------------------------
 void SDL_FreeSurface(SDL_Surface *surface)
 {
-/*	if(surface->pixels)
-		free(surface->pixels);*/
+/*
+	if(surface->pixels)
+	{
+		free(surface->pixels);
+		surface->pixels=NULL;
+	}
+	if(surface)
+		free(surface);
+*/
 	return;
 }
 //--------------------------------------------------------------------------------------------------------------------------------------
@@ -576,28 +569,19 @@ if((dst)!=NULL)
 	if((dstrect)!=NULL)
 	{
 //		slBMBoxFill(dstrect->x, dstrect->y, dstrect->x + dstrect->w - 1, dstrect->y + dstrect->h - 1, color);
-
 	for( Sint16 i=0;i<dstrect->h;i++)
 		{
-			//Uint8*s = (Uint8*)src->pixels + ((i + srcrect->y) * src->pitch) + srcrect->x; 
 			Uint8*d = (Uint8*)dst->pixels + ((i + dstrect->y) * dst->pitch) + dstrect->x; 
-//			memset(d,color,dstrect->w);
-//
-//		Uint8*d = (Uint8*)VDP2_VRAM_B1 + ((i + dstrect->y) * dst->pitch) + dstrect->x; 
-		memset(d,color,dstrect->w);
-//		DMA_ScuMemCopy(d, color, dstrect->w);
-//		DMA_ScuResult();
-//		SCU_DMAWait();
+			memset(d,color,dstrect->w);
+			
+			Uint8*d0 = (Uint8*)screen0->pixels + ((i + dstrect->y) * dst->pitch) + dstrect->x; 
+			memset(d,color,dstrect->w);
 		}
 	}
 	else
 	{
-//		slBMBoxFill(dstrect->x, dstrect->y, dstrect->x + dstrect->w - 1, dstrect->y + dstrect->h - 1, color);
-
 	   memset(dst->pixels,color,screenWidth*screenHeight);
-//		DMA_ScuMemCopy((Uint8*)VDP2_VRAM_B1, color, dstrect->w);
-//		DMA_ScuResult();
-//		SCU_DMAWait();
+	   memset(screen0->pixels,color,screenWidth*screenHeight);
 	}
 
 	return 0;
@@ -612,6 +596,7 @@ SDL_Surface * SDL_CreateRGBSurface(Uint32 flags, int width, int height, int dept
 {
 	SDL_Surface *surface;
 	surface = (SDL_Surface*)malloc(sizeof(SDL_Surface));
+	CHECKMALLOCRESULT(surface);
 /*	surface->pixels = (unsigned char*)malloc(sizeof(unsigned char)*width*height);*/
 /*	surface->pixels = (Uint8 *)(0x00202000);*/
 /*	surface->pixels = screen->pixels; */
@@ -641,7 +626,7 @@ int SDL_SetPalette(SDL_Surface *surface, int flags, SDL_Color *colors, int first
 		palo[i] = RGB(colors[i].r>>3,colors[i].g>>3,colors[i].b>>3);
 
 	}
-//	Pal2CRAM(palo , (void *)NBG0_COL_ADR , ncolors);
+	Pal2CRAM(palo , (void *)NBG0_COL_ADR , ncolors);
 	Pal2CRAM(palo , (void *)NBG1_COL_ADR , ncolors);
 
 	return 0;

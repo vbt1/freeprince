@@ -52,21 +52,41 @@ static struct {
 } roomGfx;
 
 void roomLoadGfx(long environment) {
+char toto[50];
 	if (roomGfx.environment!=NULL) {
+sprintf(toto,"resFree(roomGfx.environment)    ");
+slPrint(toto,slLocate(2,9));
+
 		resFree(roomGfx.environment);
 	}
+sprintf(toto,"resLoad(environment)    ");
+slPrint(toto,slLocate(2,9));
+
 	roomGfx.environment=resLoad(environment);
+/*while(1);*/
 	/* TODO: make potion base depend on the environment.
 	 *       create a typedef enum tEnvironment and use a switch
 	 *       move the environment types to environment.conf
 	 *       and create environment.h
 	 */
 	if (roomGfx.torch==NULL) {
+sprintf(toto,"resLoad(RES_ANIM_TORCH)    ");
+slPrint(toto,slLocate(2,9));
 		roomGfx.torch=resLoad(RES_ANIM_TORCH);
+sprintf(toto,"resLoad(potionAnimRed)    ");
+slPrint(toto,slLocate(2,9));
 		roomGfx.potionAnimRed=resLoad(RES_ANIM_POTION|RES_MODS_BW|RES_MODS_RED);
+sprintf(toto,"resLoad(potionAnimGreen)    ");
+slPrint(toto,slLocate(2,9));
 		roomGfx.potionAnimGreen=resLoad(RES_ANIM_POTION|RES_MODS_BW|RES_MODS_GREEN);
+sprintf(toto,"resLoad(potionAnimBlue)    ");
+slPrint(toto,slLocate(2,9));
 		roomGfx.potionAnimBlue=resLoad(RES_ANIM_POTION|RES_MODS_BW|RES_MODS_BLUE);
+sprintf(toto,"resLoad(potionBase)    ");
+slPrint(toto,slLocate(2,9));
 		roomGfx.potionBase=resLoad(RES_IMGS_POTION_BASE);
+sprintf(toto,"resLoad(sword)    ");
+slPrint(toto,slLocate(2,9));
 		roomGfx.sword=resLoad(RES_IMGS_SWORD);
 	}
 }
@@ -105,7 +125,7 @@ tTile roomGetTile(tRoom* room,int x, int y) {
 	if ((!room->id)||(room->id>24)) {
 		slPrint("Assert: kid outside the map                                     ",slLocate(2,21));
 /*		fprintf(stderr,"Assert: kid outside the map\n");*/		
-/*	while(1);*/
+	while(1);
 /*		exit(1);*/
 	}
 						
